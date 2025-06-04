@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -18,5 +17,4 @@
       <HintPath>..\..\lib\TiaFileFormat.dll</HintPath>
     </Reference>
   </ItemGroup>
-
 </Project>
