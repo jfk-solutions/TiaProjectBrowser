@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Images\icon.png" />
+    <None Remove="Views\SCL.xshd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Images\icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Views\STL.xshd" />
+    <EmbeddedResource Include="Views\SCL.xshd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Acornima" Version="1.1.1" />
+    <PackageReference Include="Avalonia" Version="11.3.0" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.1.1" />
+    <PackageReference Include="Avalonia.Svg.Skia" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.0" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.0" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.0" />
+    <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0" />
+    <PackageReference Include="AvaloniaEdit.TextMate.Grammars" Version="0.10.12" />
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="DotNetProjects.DotNetSiemensPLCToolBoxLibrary" Version="4.4.2" />
+    <PackageReference Include="DotNetProjects.S7CommPlusDriver" Version="1.0.16" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.6.0" />
+    <PackageReference Include="Magick.NET.Core" Version="14.6.0" />
+    <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
+    <PackageReference Include="RtfDomParser" Version="7.0.0" />
+    <PackageReference Include="WebView.Avalonia.Cross" Version="11.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TiaFileFormat.S7CommPlus\TiaFileFormat.S7CommPlus.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="TiaFileFormat">
+      <HintPath>..\..\lib\TiaFileFormat.dll</HintPath>
+    </Reference>
+    <Reference Include="VBScript.Parser">
+      <HintPath>..\..\lib\VBScript.Parser.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

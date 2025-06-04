@@ -1,0 +1,3 @@
+VBScriptParser
+BSD
+https://github.com/kmvi/vbscript-parser

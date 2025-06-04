@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TiaAvaloniaProjectBrowser.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:views="clr-namespace:TiaAvaloniaProjectBrowser.Views"
+			 x:Class="TiaAvaloniaProjectBrowser.Views.MainView">
+	<Grid>
+		<Grid.Resources>
+			<views:TreeItemConverter x:Key="treeItemConverter" />
+			<views:TreeItemSourceConverter x:Key="treeItemSourceConverter" />
+		</Grid.Resources>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="40*" />
+			<ColumnDefinition Width="5" />
+			<ColumnDefinition Width="60*"  />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="24" />
+		</Grid.RowDefinitions>
+
+		<Grid HorizontalAlignment="Stretch"  Margin="10,10,10,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="5" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="28" />
+				<RowDefinition Height="3" />
+				<RowDefinition Height="28" />
+			</Grid.RowDefinitions>
+			<Button x:Name="cmdOpen" Content="Open" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Click="cmdOpen_Click" Grid.Column="0"/>
+			<Button x:Name="cmdPassword" Content="Password" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="cmdPassword_Click" Grid.Column="2"/>
+			<Button x:Name="connect" Click="Connect_Click" Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >Connect</Button>
+		</Grid>
+		<TreeView PointerReleased="TreeView_PointerReleased" DoubleTapped="TreeView_DoubleTapped" Margin="10,78,10,30" BorderThickness="1" BorderBrush="Gray" x:Name="tv">
+			<TreeView.ItemTemplate>
+				<TreeDataTemplate ItemsSource="{Binding ProjectTreeChildrenSorted, Converter={StaticResource treeItemSourceConverter}}">
+					<ContentControl VerticalContentAlignment="Center" Height="32" Content="{Binding Converter={StaticResource treeItemConverter}}" />
+				</TreeDataTemplate>
+			</TreeView.ItemTemplate>
+		</TreeView>
+		
+		<CheckBox Checked="CheckBox_Checked_1" Unchecked="CheckBox_Checked_1" Name="chkAllFolders" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,00">Show all Folders</CheckBox>
+		<GridSplitter Background="LightGray" Grid.Column="1" HorizontalAlignment="Stretch" />
+		<views:StoreObjectView Grid.Column="2" Margin="10,10,10,10" DataContext="{Binding ElementName=tv,Path=SelectedItem}"></views:StoreObjectView>
+		<Grid Grid.Row="1" Background="LightGray" Grid.ColumnSpan="3">
+			<TextBlock VerticalAlignment="Center" x:Name="action" Margin="20,0,0,0"/>
+			<ProgressBar x:Name="progress" Width="100" HorizontalAlignment="Right" IsIndeterminate="False" Margin="0,0,20,0" />
+		</Grid>
+	</Grid>
+</UserControl>

@@ -1,0 +1,78 @@
+﻿<?xml version="1.0"?>
+<SyntaxDefinition name="SCL" extensions=".scl" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Keyword" foreground="Blue" />
+	<Color name="Comment" foreground="Green" />
+	<Color name="String" foreground="Maroon" />
+	<Color name="Number" foreground="DarkOrange" />
+
+	<RuleSet ignoreCase="true">
+		<!-- Kommentare -->
+		<Span color="Comment" begin="\(\*" end="\*\)" multiline="true" />
+		<Span color="Comment" begin="//" end="\n" />
+
+		<!-- Strings -->
+		<Span color="String" begin="'" end="'" escape="''" />
+
+		<!-- Schlüsselwörter -->
+		<Keywords color="Keyword">
+			<Word>IF</Word>
+			<Word>THEN</Word>
+			<Word>ELSE</Word>
+			<Word>ELSIF</Word>
+			<Word>END_IF</Word>
+			<Word>FOR</Word>
+			<Word>TO</Word>
+			<Word>DO</Word>
+			<Word>END_FOR</Word>
+			<Word>WHILE</Word>
+			<Word>END_WHILE</Word>
+			<Word>CASE</Word>
+			<Word>OF</Word>
+			<Word>END_CASE</Word>
+			<Word>REPEAT</Word>
+			<Word>UNTIL</Word>
+			<Word>END_REPEAT</Word>
+			<Word>VAR</Word>
+			<Word>VAR_INPUT</Word>
+			<Word>VAR_OUTPUT</Word>
+			<Word>VAR_IN_OUT</Word>
+			<Word>VAR_TEMP</Word>
+			<Word>VAR_GLOBAL</Word>
+			<Word>VAR_EXTERNAL</Word>
+			<Word>VAR_STAT</Word>
+			<Word>END_VAR</Word>
+			<Word>FUNCTION</Word>
+			<Word>END_FUNCTION</Word>
+			<Word>FUNCTION_BLOCK</Word>
+			<Word>END_FUNCTION_BLOCK</Word>
+			<Word>PROGRAM</Word>
+			<Word>END_PROGRAM</Word>
+			<Word>TYPE</Word>
+			<Word>END_TYPE</Word>
+			<Word>STRUCT</Word>
+			<Word>END_STRUCT</Word>
+			<Word>REGION</Word>
+			<Word>END_REGION</Word>
+			<Word>ARRAY</Word>
+			<Word>OF</Word>
+			<Word>RETURN</Word>
+			<Word>AND</Word>
+			<Word>OR</Word>
+			<Word>XOR</Word>
+			<Word>NOT</Word>
+			<Word>BEGIN</Word>
+			<Word>RETAIN</Word>
+			<Word>DB_SPECIFIC</Word>
+		</Keywords>
+
+		<!-- Digits -->
+		<Rule color="Number">
+			\b0[xX][0-9a-fA-F]+  # hex number
+			|    \b
+			(    \d+(\.[0-9]+)?   #number with optional floating point
+			|    \.[0-9]+         #or just starting with floating point
+			)
+			([eE][+-]?[0-9]+)? # optional exponent
+		</Rule>
+	</RuleSet>
+</SyntaxDefinition>

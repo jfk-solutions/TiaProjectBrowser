@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TiaAvaloniaProjectBrowser.Views.IpSelector">
+    <Grid Margin="10">
+        <DataGrid DoubleTapped="DataGrid_DoubleTapped" SelectionChanged="lstIps_SelectionChanged" Margin="0,0,90,50" RowHeight="30" x:Name="lstIps" CanUserResizeColumns="True" AutoGenerateColumns="True" IsReadOnly="True" GridLinesVisibility="All"></DataGrid>
+        <Button Click="Ok_Click" HorizontalAlignment="Right" VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0,0,0,0" Width="80">Ok</Button>
+        <Button Click="Cancel_Click" HorizontalAlignment="Right" VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0,40,0,0" Width="80">Cancel</Button>
+        <TextBox Name="txtIp" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="0,0,0,0"></TextBox>
+    </Grid>
+</UserControl>

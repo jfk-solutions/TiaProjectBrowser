@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="TiaFileFormat.S7CommPlus/TiaFileFormat.S7CommPlus.csproj" />
+  <Project Path="TiaProjectBrowser.Desktop\TiaProjectBrowser.Desktop.csproj" />
+  <Project Path="TiaProjectBrowser\TiaProjectBrowser.csproj" />
+</Solution>
