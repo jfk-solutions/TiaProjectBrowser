@@ -116,7 +116,7 @@ public partial class MainView : UserControl
 
         var tiaFileType = new FilePickerFileType("Tia Portal Files")
         {
-            Patterns = new[] { "*.plf", "*.ap20", "*.ap19", "*.ap18", "*.ap17", "*.ap16", "*.ap15_1", "*.ap15", "*.ap14", "*.ap13", "*.ap12", "*.ap11", "*.ap10", "*.zap20", "*.zal20", "*.zap19", "*.zal19", "*.zap18", "*.zal18", "*.zap17", "*.zal17", "*.zap16", "*.zal16", "*.zap15_1", "*.zal15_1", "*.zap15", "*.zal15", "*.zap14", "*.zal14", "*.zap13", "*.zal13", "*.zap12", "*.zal12", "*.zap11", "*.zal11", "*.zip", "*.s7p", "*.s7l" },
+            Patterns = new[] { "*.plf", "*.ap20", "*.ap19", "*.ap18", "*.ap17", "*.ap16", "*.ap15_1", "*.ap15", "*.ap14", "*.ap13", "*.ap12", "*.ap11", "*.ap10", "*.zap20", "*.zal20", "*.zap19", "*.zal19", "*.zap18", "*.zal18", "*.zap17", "*.zal17", "*.zap16", "*.zal16", "*.zap15_1", "*.zal15_1", "*.zap15", "*.zal15", "*.zap14", "*.zal14", "*.zap13", "*.zal13", "*.zap12", "*.zal12", "*.zap11", "*.zal11", "*.zip", "*.s7p", "*.s7l", "*.s5d" },
             AppleUniformTypeIdentifiers = new[] { "org.tia.portal" },
             MimeTypes = new[] { "application/tia" }
         };
