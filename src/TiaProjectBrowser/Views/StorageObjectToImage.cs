@@ -26,12 +26,6 @@ namespace TiaAvaloniaProjectBrowser.Views
                         imgData = imgDataAttr.GenuineContent.Data;
                     }
                     var format = imgDataAttr?.FileExtension;
-                    //if (string.IsNullOrEmpty(format))
-                    //{
-                    //    using var ms = new MemoryStream();
-                    //    using var image = new MagickImage(imgData.Value.ToArray());
-                    //    format = "." + image.Format.ToString().ToLower();
-                    //}
 
                     if (imgDataAttr.FileExtension == ".svg")
                     {
