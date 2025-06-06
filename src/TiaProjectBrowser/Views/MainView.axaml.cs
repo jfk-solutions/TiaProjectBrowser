@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using DotNetSiemensPLCToolBoxLibrary.DataTypes;
+using DotNetSiemensPLCToolBoxLibrary.DataTypes.Blocks;
 using DotNetSiemensPLCToolBoxLibrary.DataTypes.Blocks.Step5;
 using DotNetSiemensPLCToolBoxLibrary.DataTypes.Blocks.Step7V5;
 using DotNetSiemensPLCToolBoxLibrary.DataTypes.Projectfolders;
@@ -97,6 +98,15 @@ public partial class MainView : UserControl
         public IEnumerable<object> ProjectTreeChildrenSorted { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+    }
+
+    public class Step5_7TreeItem
+    {
+        public string Name { get; set; }
+
+        public ProjectBlockInfo ProjectBlockInfo { get; set; }
+
+        public IEnumerable<object> ProjectTreeChildrenSorted { get; set; }
     }
 
     ObservableCollection<object> items;
@@ -201,11 +211,11 @@ public partial class MainView : UserControl
         var fld = new SimpleTreeItem() { Name = projectFolder.Name, ProjectTreeChildrenSorted = projectFolder.SubItems?.Select(x => ToSimpleTreeItem(x)) };
         if (projectFolder is BlocksOfflineFolder blkOfflineFld)
         {
-            fld.ProjectTreeChildrenSorted = blkOfflineFld.BlockInfos.Select(x => new SimpleTreeItem() { Name = ((S7ProjectBlockInfo)x).BlockName + (x.Name == null ? "" : " (" + x.Name + ")") });
+            fld.ProjectTreeChildrenSorted = blkOfflineFld.BlockInfos.Select(x => new Step5_7TreeItem() { ProjectBlockInfo = x, Name = ((S7ProjectBlockInfo)x).BlockName + (x.Name == null ? "" : " (" + x.Name + ")") });
         }
         else if (projectFolder is Step5BlocksFolder step5BlocksFolder)
         {
-            fld.ProjectTreeChildrenSorted = step5BlocksFolder.BlockInfos.Select(x => new SimpleTreeItem() { Name = ((S5ProjectBlockInfo)x).BlockName + (x.Name == null ? "" : " (" + x.Name + ")") });
+            fld.ProjectTreeChildrenSorted = step5BlocksFolder.BlockInfos.Select(x => new Step5_7TreeItem() { ProjectBlockInfo = x, Name = ((S5ProjectBlockInfo)x).BlockName + (x.Name == null ? "" : " (" + x.Name + ")") });
         }
         return fld;
     }

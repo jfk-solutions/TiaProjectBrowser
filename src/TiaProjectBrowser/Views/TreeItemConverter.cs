@@ -22,6 +22,16 @@ namespace TiaAvaloniaProjectBrowser.Views
                 tbn.Bind(TextBlock.TextProperty, binding);
                 return tbn;
             }
+            else if (value is Step5_7TreeItem step5_7TreeItem)
+            {
+                var tbn = new TextBlock() { VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center };
+                var binding = new Binding
+                {
+                    Path = nameof(Step5_7TreeItem.Name)
+                };
+                tbn.Bind(TextBlock.TextProperty, binding);
+                return tbn;
+            }
             var sb = value as StorageBusinessObject;
 
             Control ctl = null;
