@@ -2,6 +2,13 @@
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using DotNetSiemensPLCToolBoxLibrary.DataTypes;
+using DotNetSiemensPLCToolBoxLibrary.DataTypes.Blocks.Step5;
+using DotNetSiemensPLCToolBoxLibrary.DataTypes.Blocks.Step7V5;
+using DotNetSiemensPLCToolBoxLibrary.DataTypes.Projectfolders;
+using DotNetSiemensPLCToolBoxLibrary.DataTypes.Projectfolders.Step5;
+using DotNetSiemensPLCToolBoxLibrary.DataTypes.Projectfolders.Step7V5;
+using DotNetSiemensPLCToolBoxLibrary.Projectfiles;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Models;
@@ -99,7 +106,7 @@ public partial class MainView : UserControl
 
         var tiaFileType = new FilePickerFileType("Tia Portal Files")
         {
-            Patterns = new[] { "*.plf", "*.ap20", "*.ap19", "*.ap18", "*.ap17", "*.ap16", "*.ap15_1", "*.ap15", "*.ap14", "*.ap13", "*.ap12", "*.ap11", "*.ap10", "*.zap20", "*.zal20", "*.zap19", "*.zal19", "*.zap18", "*.zal18", "*.zap17", "*.zal17", "*.zap16", "*.zal16", "*.zap15_1", "*.zal15_1", "*.zap15", "*.zal15", "*.zap14", "*.zal14", "*.zap13", "*.zal13", "*.zap12", "*.zal12", "*.zap11", "*.zal11", "*.zip" },
+            Patterns = new[] { "*.plf", "*.ap20", "*.ap19", "*.ap18", "*.ap17", "*.ap16", "*.ap15_1", "*.ap15", "*.ap14", "*.ap13", "*.ap12", "*.ap11", "*.ap10", "*.zap20", "*.zal20", "*.zap19", "*.zal19", "*.zap18", "*.zal18", "*.zap17", "*.zal17", "*.zap16", "*.zal16", "*.zap15_1", "*.zal15_1", "*.zap15", "*.zal15", "*.zap14", "*.zal14", "*.zap13", "*.zal13", "*.zap12", "*.zal12", "*.zap11", "*.zal11", "*.zip", "*.s7p", "*.s7l" },
             AppleUniformTypeIdentifiers = new[] { "org.tia.portal" },
             MimeTypes = new[] { "application/tia" }
         };
@@ -166,81 +173,121 @@ public partial class MainView : UserControl
             var fti = fileTvItem;
             var container = items;
 
-            var tfp = TiaFileProvider.CreateFromSingleFile(file);
-            if (tfp.TiaFileProviderType != TiaFileProviderType.Unkown)
+            if (!LoadStep7Project(file, fileTvItem, container))
             {
-                var project = TiaProject.Load(tfp);
-                var database = project.Database;
-                databaseTreeItemCollectionDict.Add(database, items);
+                LoadTiaProject(file, fileTvItem, container);
+            }
 
-                var umacItems = new List<object>();
+        }).ConfigureAwait(false);
+    }
+
+    private bool LoadStep7Project(string file, SimpleTreeItem fileTvItem, ObservableCollection<object> container)
+    {
+        Project prj = Projects.LoadProject(file, showDeleted: false); //, chkShowDeleted.Checked, credentials
+        if (prj != null)
+        {
+            //SimpleTreeItem
+            //prj.ProjectStructure
+            container.Add(ToSimpleTreeItem(prj.ProjectStructure));
+            return true;
+        }
+        return false;
+    }
+
+    #region S5/7 support
+
+    private SimpleTreeItem ToSimpleTreeItem(ProjectFolder projectFolder)
+    {
+        var fld = new SimpleTreeItem() { Name = projectFolder.Name, ProjectTreeChildrenSorted = projectFolder.SubItems?.Select(x => ToSimpleTreeItem(x)) };
+        if (projectFolder is BlocksOfflineFolder blkOfflineFld)
+        {
+            fld.ProjectTreeChildrenSorted = blkOfflineFld.BlockInfos.Select(x => new SimpleTreeItem() { Name = ((S7ProjectBlockInfo)x).BlockName + (x.Name == null ? "" : " (" + x.Name + ")") });
+        }
+        else if (projectFolder is Step5BlocksFolder step5BlocksFolder)
+        {
+            fld.ProjectTreeChildrenSorted = step5BlocksFolder.BlockInfos.Select(x => new SimpleTreeItem() { Name = ((S5ProjectBlockInfo)x).BlockName + (x.Name == null ? "" : " (" + x.Name + ")") });
+        }
+        return fld;
+    }
+
+    private void LoadTiaProject(string file, SimpleTreeItem fileTvItem, ObservableCollection<object> container)
+    {
+        var tfp = TiaFileProvider.CreateFromSingleFile(file);
+        if (tfp.TiaFileProviderType != TiaFileProviderType.Unkown)
+        {
+            var project = TiaProject.Load(tfp);
+            var database = project.Database;
+            databaseTreeItemCollectionDict.Add(database, items);
+
+            var umacItems = new List<object>();
+            if (database.RootObject.StoreObjectIds.ContainsKey("Project"))
+            {
+                var prjObj = (StorageBusinessObject)database.RootObject.StoreObjectIds["Project"].StorageObject;
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    fileTvItem.Name = file + "  [ parseing... ]";
+                    container.Add(prjObj);
+                });
+            }
+            if (database.RootObject.StoreObjectIds.ContainsKey("Library"))
+            {
+                var libObj = (StorageBusinessObject)database.RootObject.StoreObjectIds["Library"].StorageObject;
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    fileTvItem.Name = file + "  [ parseing... ]";
+                    container.Add(libObj);
+                });
+            }
+
+            _ = Task.Factory.StartNew(() =>
+            {
+                var lst = container;
+                database.ParseAllObjects();
+
+                var umacItems = new List<StorageBusinessObject>();
                 if (database.RootObject.StoreObjectIds.ContainsKey("Project"))
                 {
                     var prjObj = (StorageBusinessObject)database.RootObject.StoreObjectIds["Project"].StorageObject;
-                    Dispatcher.UIThread.Invoke(() =>
-                    {
-                        fileTvItem.Name = file + "  [ parseing... ]";
-                        container.Add(prjObj);
-                    });
+                    umacItems.AddRange(prjObj.GetRelationsWithNameResolved("Siemens.Automation.Umac.Model.Root.UmacRootData.UmacRoot"));
                 }
                 if (database.RootObject.StoreObjectIds.ContainsKey("Library"))
                 {
                     var libObj = (StorageBusinessObject)database.RootObject.StoreObjectIds["Library"].StorageObject;
-                    Dispatcher.UIThread.Invoke(() =>
-                    {
-                        fileTvItem.Name = file + "  [ parseing... ]";
-                        container.Add(libObj);
-                    });
+                    umacItems.AddRange(libObj.GetRelationsWithNameResolved("Siemens.Automation.Umac.Model.Root.UmacRootData.UmacRoot"));
                 }
-
-                _ = Task.Factory.StartNew(() =>
+                umacItems = umacItems.Distinct().ToList();
+                if (umacItems.Count > 0)
                 {
-                    var lst = container;
-                    database.ParseAllObjects();
-
-                    var umacItems = new List<StorageBusinessObject>();
-                    if (database.RootObject.StoreObjectIds.ContainsKey("Project"))
+                    var umac = umacItems[0];
+                    var users = umac.GetRelationsWithNameResolved("Siemens.Automation.Umac.Model.Root.UmacRootData.AllUsers");
+                    if (users.Count() > 0)
                     {
-                        var prjObj = (StorageBusinessObject)database.RootObject.StoreObjectIds["Project"].StorageObject;
-                        umacItems.AddRange(prjObj.GetRelationsWithNameResolved("Siemens.Automation.Umac.Model.Root.UmacRootData.UmacRoot"));
-                    }
-                    if (database.RootObject.StoreObjectIds.ContainsKey("Library"))
-                    {
-                        var libObj = (StorageBusinessObject)database.RootObject.StoreObjectIds["Library"].StorageObject;
-                        umacItems.AddRange(libObj.GetRelationsWithNameResolved("Siemens.Automation.Umac.Model.Root.UmacRootData.UmacRoot"));
-                    }
-                    umacItems = umacItems.Distinct().ToList();
-                    if (umacItems.Count > 0)
-                    {
-                        var umac = umacItems[0];
-                        var users = umac.GetRelationsWithNameResolved("Siemens.Automation.Umac.Model.Root.UmacRootData.AllUsers");
-                        if (users.Count() > 0)
-                        {
-                            var userItem = new SimpleTreeItem() { Name = "Users", ProjectTreeChildrenSorted = users };
-                            Dispatcher.UIThread.Invoke(() =>
-                            {
-                                lst.Add(new SimpleTreeItem() { Name = "Security", ProjectTreeChildrenSorted = [userItem] });
-                            });
-                        }
-                    }
-                    var imgs = database.FindStorageBusinessObjectsWithChildType<HmiInternalImageAttributes>();
-                    if (imgs.Count() > 0)
-                    {
+                        var userItem = new SimpleTreeItem() { Name = "Users", ProjectTreeChildrenSorted = users };
                         Dispatcher.UIThread.Invoke(() =>
                         {
-                            lst.Add(new SimpleTreeItem() { Name = "Images in Project", ProjectTreeChildrenSorted = imgs });
+                            lst.Add(new SimpleTreeItem() { Name = "Security", ProjectTreeChildrenSorted = [userItem] });
                         });
                     }
+                }
+                var imgs = database.FindStorageBusinessObjectsWithChildType<HmiInternalImageAttributes>();
+                if (imgs.Count() > 0)
+                {
                     Dispatcher.UIThread.Invoke(() =>
                     {
-                        fileTvItem.Name = file;
+                        lst.Add(new SimpleTreeItem() { Name = "Images in Project", ProjectTreeChildrenSorted = imgs });
                     });
+                }
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    fileTvItem.Name = file;
+                });
 
-                    //var a = database.AllStorageObjects.OfType<StorageBusinessObject>().Where(x => x.GetChild<ProjectUserAttributes>() != null || x.GetChild<UmcUserAttributes>() != null).ToList();
-                }).ConfigureAwait(false);
-            }
-        }).ConfigureAwait(false);
+                //var a = database.AllStorageObjects.OfType<StorageBusinessObject>().Where(x => x.GetChild<ProjectUserAttributes>() != null || x.GetChild<UmcUserAttributes>() != null).ToList();
+            }).ConfigureAwait(false);
+        }
     }
+
+    #endregion
 
     bool FindInObject(object o, string search)
     {
