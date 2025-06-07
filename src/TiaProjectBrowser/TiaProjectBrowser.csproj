@@ -43,6 +43,7 @@
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.6.0" />
     <PackageReference Include="Magick.NET.Core" Version="14.6.0" />
     <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
+    <PackageReference Include="Northwoods.GoDiagram.Avalonia" Version="10.0.12" />
     <PackageReference Include="RtfDomParser" Version="7.0.0" />
     <PackageReference Include="SharpPcap" Version="6.3.1" />
     <PackageReference Include="WebView.Avalonia.Cross" Version="11.2.4" />
@@ -64,5 +65,11 @@
     <Reference Include="VBScript.Parser">
       <HintPath>..\..\lib\VBScript.Parser.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\CallOrder.axaml.cs">
+      <DependentUpon>CallOrder.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

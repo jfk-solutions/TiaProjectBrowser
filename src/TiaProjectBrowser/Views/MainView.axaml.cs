@@ -587,12 +587,29 @@ public partial class MainView : UserControl
                         }
                     }
                 };
+                var callChart = new MenuItem { Header = "Call Order", };
+                callChart.Click += async (s, e) =>
+                {
+                    try
+                    {
+                        var sov = new CallOrder();
+                        sov.DataContext = sb;
+                        var wnd = new Window();
+                        wnd.Content = sov;
+                        wnd.Padding = new Avalonia.Thickness(10);
+                        var ttn = sb is StorageBusinessObject sbo ? sbo.TiaTypeName : "";
+                        wnd.Title = "Call Order: " + sb.Header.StoreObjectId + " (" + ttn + ")";
+                        wnd.Show();
+                    }
+                    catch (Exception) { }
+                };
                 var contextMenu = new ContextMenu
                 {
                     Items =
                 {
                     mnuI,
-                    opn
+                    opn,
+                    callChart
                 }
                 };
 
