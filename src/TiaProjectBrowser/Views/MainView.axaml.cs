@@ -193,14 +193,18 @@ public partial class MainView : UserControl
 
     private bool LoadStep7Project(string file, SimpleTreeItem fileTvItem, ObservableCollection<object> container)
     {
-        Project prj = Projects.LoadProject(file, showDeleted: false); //, chkShowDeleted.Checked, credentials
-        if (prj != null)
+        try
         {
-            //SimpleTreeItem
-            //prj.ProjectStructure
-            container.Add(ToSimpleTreeItem(prj.ProjectStructure));
-            return true;
+            Project prj = Projects.LoadProject(file, showDeleted: false); //, chkShowDeleted.Checked, credentials
+            if (prj != null)
+            {
+                //SimpleTreeItem
+                //prj.ProjectStructure
+                container.Add(ToSimpleTreeItem(prj.ProjectStructure));
+                return true;
+            }
         }
+        catch { }
         return false;
     }
 
@@ -211,11 +215,35 @@ public partial class MainView : UserControl
         var fld = new SimpleTreeItem() { Name = projectFolder.Name, ProjectTreeChildrenSorted = projectFolder.SubItems?.Select(x => ToSimpleTreeItem(x)) };
         if (projectFolder is BlocksOfflineFolder blkOfflineFld)
         {
-            fld.ProjectTreeChildrenSorted = blkOfflineFld.BlockInfos.Select(x => new Step5_7TreeItem() { ProjectBlockInfo = x, Name = ((S7ProjectBlockInfo)x).BlockName + (x.Name == null ? "" : " (" + x.Name + ")") });
+            var ret = blkOfflineFld.BlockInfos
+                .OfType<S7ProjectBlockInfo>()
+                .GroupBy(x => x.BlockType)
+                .Select(x => new SimpleTreeItem()
+                {
+                    Name = x.Key.ToString(),
+                    ProjectTreeChildrenSorted = x.Select(y => new Step5_7TreeItem()
+                    {
+                        ProjectBlockInfo = y,
+                        Name = y.BlockName + (y.Name == null ? "" : " (" + y.Name + ")")
+                    })
+                });
+            fld.ProjectTreeChildrenSorted = ret;
         }
         else if (projectFolder is Step5BlocksFolder step5BlocksFolder)
         {
-            fld.ProjectTreeChildrenSorted = step5BlocksFolder.BlockInfos.Select(x => new Step5_7TreeItem() { ProjectBlockInfo = x, Name = ((S5ProjectBlockInfo)x).BlockName + (x.Name == null ? "" : " (" + x.Name + ")") });
+            var ret = step5BlocksFolder.BlockInfos
+                .OfType<S5ProjectBlockInfo>()
+                .GroupBy(x => x.BlockType)
+                .Select(x => new SimpleTreeItem()
+                {
+                    Name = x.Key.ToString(),
+                    ProjectTreeChildrenSorted = x.Select(y => new Step5_7TreeItem()
+                    {
+                        ProjectBlockInfo = y,
+                        Name = y.BlockName + (y.Name == null ? "" : " (" + y.Name + ")")
+                    })
+                });
+            fld.ProjectTreeChildrenSorted = ret;
         }
         return fld;
     }
@@ -603,13 +631,24 @@ public partial class MainView : UserControl
                     }
                     catch (Exception) { }
                 };
+                var copyMnu = new MenuItem { Header = "Copy to Clipboard", };
+                copyMnu.Click += async (s, e) =>
+                {
+                    try
+                    {
+                        var clipboard = TopLevel.GetTopLevel(this).Clipboard;
+                        //clipboard.SetTextAsync();
+                    }
+                    catch (Exception) { }
+                };
                 var contextMenu = new ContextMenu
                 {
                     Items =
                 {
                     mnuI,
                     opn,
-                    callChart
+                    callChart,
+                    copyMnu,
                 }
                 };
 

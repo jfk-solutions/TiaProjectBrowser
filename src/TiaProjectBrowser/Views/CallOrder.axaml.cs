@@ -1,6 +1,8 @@
 using Avalonia.Controls;
 using Northwoods.Go.Models;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TiaAvaloniaProjectBrowser;
 
@@ -17,11 +19,13 @@ public partial class CallOrder : UserControl
     public CallOrder()
     {
         InitializeComponent();
-        aa();
+        //aa();
     }
 
-    public void aa()
+    public async void aa()
     {
+        await Task.Delay(2000).ConfigureAwait(true);
+
         var model = new Model
         {
             NodeDataSource = new List<NodeData> {
@@ -39,7 +43,12 @@ public partial class CallOrder : UserControl
       }
         };
 
-        var diagram = diagramControl1.Diagram;
-        diagram.Model = model;
+        try
+        {
+            var diagram = diagramControl1.Diagram;
+            diagram.Model = model;
+        }
+        catch(Exception)
+        { }
     }
 }
