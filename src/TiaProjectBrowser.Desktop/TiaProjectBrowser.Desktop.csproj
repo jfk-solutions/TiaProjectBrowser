@@ -16,4 +16,10 @@
   <ItemGroup>
     <ProjectReference Include="..\TiaProjectBrowser\TiaProjectBrowser.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TiaProjectBrowser.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
