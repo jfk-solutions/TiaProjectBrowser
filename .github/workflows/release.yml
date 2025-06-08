@@ -42,3 +42,16 @@ jobs:
       with:
         files: 'src/TiaProjectBrowser.Desktop/bin/Release/net9.0/TiaProjectBrowser-${{ github.event.release.tag_name }}.zip'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish
+      run: |
+        dotnet publish -r win-x64 --self-contained true -p:PublishSingleFile=true -c Release src/TiaProjectBrowser.Desktop/TiaProjectBrowser.Desktop.csproj
+        
+    - name: Zip files (win-x64)
+      working-directory: ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64
+      run: zip -r TiaProjectBrowser-${{ github.event.release.tag_name }}-win-x64.zip .
+    - name: Upload to release
+      uses: AButler/upload-release-assets@v3.0
+      with:
+        files: 'src/TiaProjectBrowser.Desktop/bin/Release/net9.0/TiaProjectBrowser-${{ github.event.release.tag_name }}-win-x64.zip'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
