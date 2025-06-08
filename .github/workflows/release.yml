@@ -36,7 +36,7 @@ jobs:
         
     - name: Zip files
       working-directory: ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0
-      run: zip -r TiaProjectBrowser-${{ github.event.release.tag_name }}.zip *.*
+      run: zip -r TiaProjectBrowser-${{ github.event.release.tag_name }}.zip .
     - name: Upload to release
       uses: AButler/upload-release-assets@v3.0
       with:
