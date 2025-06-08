@@ -1,0 +1,44 @@
+name: .NET
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Fetch history
+      run: git fetch --prune --unshallow
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+           9.0.x
+    - name: Restore dependencies
+      run: |
+        dotnet restore src/TiaProjectBrowser.slnx
+
+    - name: Update project version
+      uses: roryprimrose/set-vs-sdk-project-version@v1
+      with:
+        version: ${{ github.event.release.tag_name }}
+        assemblyVersion: ${{ github.event.release.tag_name }}
+        fileVersion: ${{ github.event.release.tag_name }}
+        informationalVersion: ${{ github.event.release.tag_name }}-${{ github.sha }}
+    
+    - name: Build
+      run: |
+        dotnet build -c Release src/TiaProjectBrowser.slnx
+        
+    - name: Zip files
+      working-directory: ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0
+      run: zip TiaProjectBrowser-${{ github.event.release.tag_name }}.zip *.*
+    - name: Upload to release
+      uses: AButler/upload-release-assets@v3.0
+      with:
+        files: 'src/TiaProjectBrowser.Desktop/bin/Release/net9.0/libs/TiaProjectBrowser-${{ github.event.release.tag_name }}.zip'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}

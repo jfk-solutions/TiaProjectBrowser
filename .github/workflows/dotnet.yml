@@ -27,6 +27,3 @@ jobs:
     - name: Build
       run: |
         dotnet build -c Release src/TiaProjectBrowser.slnx
-    - uses: actions/upload-artifact@v4
-      with:
-        path: src/S7CommPlusDriver/bin/Release/*.*
