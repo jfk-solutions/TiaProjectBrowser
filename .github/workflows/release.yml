@@ -53,5 +53,5 @@ jobs:
     - name: Upload to release
       uses: AButler/upload-release-assets@v3.0
       with:
-        files: 'src/TiaProjectBrowser.Desktop/bin/Release/net9.0/TiaProjectBrowser-${{ github.event.release.tag_name }}-win-x64.zip'
+        files: 'src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/TiaProjectBrowser-${{ github.event.release.tag_name }}-win-x64.zip'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
