@@ -37,11 +37,13 @@ using TiaFileFormat.Wrappers.CfCharts.Converter;
 using TiaFileFormat.Wrappers.CodeBlocks;
 using TiaFileFormat.Wrappers.CodeBlocks.Interface;
 using TiaFileFormat.Wrappers.Controller.Alarms;
+using TiaFileFormat.Wrappers.Controller.ExternalSources;
 using TiaFileFormat.Wrappers.Controller.Network;
 using TiaFileFormat.Wrappers.Controller.Tags;
 using TiaFileFormat.Wrappers.Controller.WatchTable;
 using TiaFileFormat.Wrappers.Converters.AutomationXml;
 using TiaFileFormat.Wrappers.Converters.Code;
+using TiaFileFormat.Wrappers.Hmi.Alarms;
 using TiaFileFormat.Wrappers.Hmi.Connections;
 using TiaFileFormat.Wrappers.Hmi.Cycle;
 using TiaFileFormat.Wrappers.Hmi.GraphicLists;
@@ -572,6 +574,13 @@ public partial class StoreObjectView : UserControl, IDisposable
                         {
                             switch (highLevelObject)
                             {
+                                case ExternalSource externalSource:
+                                    {
+                                        codeEditor.Text = externalSource.ContentAsString;
+                                        tabCodeEditor.IsVisible = true;
+                                        tabCodeEditor.IsSelected = true;
+                                        break;
+                                    }
                                 case User user:
                                     {
                                         codeEditor.Text = JsonSerializer.Serialize(user, new JsonSerializerOptions() { WriteIndented = true });
@@ -721,6 +730,15 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         tabCodeEditor.IsSelected = true;
                                         break;
                                     }
+                                case HmiCycleList hmiCycleList:
+                                    {
+                                        codeEditor.Text = JsonSerializer.Serialize(hmiCycleList, new JsonSerializerOptions() { WriteIndented = true });
+                                        datagrid.ItemsSource = hmiCycleList.HmiCycles;
+                                        tabCodeEditor.IsVisible = true;
+                                        tabGrid.IsVisible = true;
+                                        tabGrid.IsSelected = true;
+                                        break;
+                                    }
                                 case HmiConnection hmiConnection:
                                     {
                                         codeEditor.Text = JsonSerializer.Serialize(hmiConnection, new JsonSerializerOptions() { WriteIndented = true });
@@ -728,9 +746,34 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         tabCodeEditor.IsSelected = true;
                                         break;
                                     }
+                                case HmiConnectionList hmiConnectionList:
+                                    {
+                                        codeEditor.Text = JsonSerializer.Serialize(hmiConnectionList, new JsonSerializerOptions() { WriteIndented = true });
+                                        datagrid.ItemsSource = hmiConnectionList.Connections;
+                                        tabCodeEditor.IsVisible = true;
+                                        tabGrid.IsVisible = true;
+                                        tabGrid.IsSelected = true;
+                                        break;
+                                    }
+                                case HmiAlarmList hmiAlarmList:
+                                    {
+                                        codeEditor.Text = JsonSerializer.Serialize(hmiAlarmList, new JsonSerializerOptions() { WriteIndented = true });
+                                        tabCodeEditor.IsVisible = true;
+                                        if (hmiAlarmList.HmiAlarmListType == HmiAlarmListType.Discrete)
+                                            datagrid.ItemsSource = hmiAlarmList.Alarms.OfType<HmiDiscreteAlarm>().ToList();
+                                        else if (hmiAlarmList.HmiAlarmListType == HmiAlarmListType.Analog)
+                                            datagrid.ItemsSource = hmiAlarmList.Alarms.OfType<HmiAnalogAlarm>().ToList();
+                                        else if (hmiAlarmList.HmiAlarmListType == HmiAlarmListType.OpcUa)
+                                            datagrid.ItemsSource = hmiAlarmList.Alarms.OfType<HmiOpcUaAlarm>().ToList();
+                                        else if (hmiAlarmList.HmiAlarmListType == HmiAlarmListType.System)
+                                            datagrid.ItemsSource = hmiAlarmList.Alarms.OfType<HmiSystemAlarm>().ToList();
+                                        tabGrid.IsVisible = true;
+                                        tabGrid.IsSelected = true;
+                                        break;
+                                    }
                                 default:
                                     {
-                                        codeEditor.Text = JsonSerializer.Serialize(highLevelObject, new JsonSerializerOptions() { WriteIndented = true });
+                                        codeEditor.Text = JsonSerializer.Serialize(highLevelObject, highLevelObject.GetType(), new JsonSerializerOptions() { WriteIndented = true });
                                         tabCodeEditor.IsVisible = true;
                                         tabCodeEditor.IsSelected = true;
                                         break;
