@@ -93,7 +93,7 @@ public partial class IpSelector : UserControl
         MainView.Instance.SetActionText("Try to connect to IP: " + ip);
         Task.Factory.StartNew(() =>
         {
-            var res = s7CommPlusConnection.Connect(ip, "", 30000);
+            var res = s7CommPlusConnection.Connect(ip, "", "", 30000);
             if (res == 0)
             {
                 MainView.Instance.SetActionText("Connected to " + ip + " now reading Blocks");
