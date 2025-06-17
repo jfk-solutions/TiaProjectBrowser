@@ -38,6 +38,7 @@ using TiaFileFormat.Wrappers.CodeBlocks;
 using TiaFileFormat.Wrappers.CodeBlocks.Interface;
 using TiaFileFormat.Wrappers.Controller.Alarms;
 using TiaFileFormat.Wrappers.Controller.ExternalSources;
+using TiaFileFormat.Wrappers.Controller.NamedValues;
 using TiaFileFormat.Wrappers.Controller.Network;
 using TiaFileFormat.Wrappers.Controller.Tags;
 using TiaFileFormat.Wrappers.Controller.WatchTable;
@@ -577,6 +578,13 @@ public partial class StoreObjectView : UserControl, IDisposable
                                 case ExternalSource externalSource:
                                     {
                                         codeEditor.Text = externalSource.ContentAsString;
+                                        tabCodeEditor.IsVisible = true;
+                                        tabCodeEditor.IsSelected = true;
+                                        break;
+                                    }
+                                case NamedValue namedValue:
+                                    {
+                                        codeEditor.Text = namedValue.ContentAsString;
                                         tabCodeEditor.IsVisible = true;
                                         tabCodeEditor.IsSelected = true;
                                         break;
