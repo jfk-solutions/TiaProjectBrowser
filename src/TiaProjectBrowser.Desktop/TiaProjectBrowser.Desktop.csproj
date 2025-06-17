@@ -7,6 +7,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\licence\tiafileformat.license" Link="tiafileformat.license">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="11.3.1" />

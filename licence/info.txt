@@ -1,0 +1,3 @@
+This License file allows the TiaFileFormat program to run for 28 days.
+
+for a full Licence visit: http://jfk-solutions.de
