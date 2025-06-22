@@ -42,6 +42,7 @@ xmlns:avaloniaedit="using:AvaloniaEdit"
 				<TabItem Header="SVG" IsVisible="False" x:Name="tabSvg"><Svg x:Name="svg"></Svg></TabItem>
 				<TabItem Header="HTML" IsVisible="False" x:Name="tabWebview"></TabItem>
 				<TabItem Header="Grid" IsVisible="False" x:Name="tabGrid"><DataGrid UseLayoutRounding="False" RowHeight="30" x:Name="datagrid" CanUserResizeColumns="True" AutoGenerateColumns="True" IsReadOnly="True" GridLinesVisibility="All"></DataGrid></TabItem>
+				<TabItem Header="Grid" IsVisible="False" x:Name="tabGrid2"><DataGrid UseLayoutRounding="False" RowHeight="30" x:Name="datagrid2" CanUserResizeColumns="True" AutoGenerateColumns="True" IsReadOnly="True" GridLinesVisibility="All"></DataGrid></TabItem>
 				<TabItem Header="Grid" IsVisible="False" x:Name="tabGraphicGrid">
 					<DataGrid UseLayoutRounding="False" RowHeight="30" x:Name="graphicdatagrid" CanUserResizeColumns="True" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="All">
 						<DataGrid.Columns>

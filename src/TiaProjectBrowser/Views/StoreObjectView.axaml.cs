@@ -4,6 +4,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using AvaloniaEdit.Folding;
 using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Highlighting.Xshd;
 using AvaloniaEdit.TextMate;
@@ -53,7 +54,6 @@ using TiaFileFormat.Wrappers.Hmi.WinCCAdvanced;
 using TiaFileFormat.Wrappers.Hmi.WinCCUnified;
 using TiaFileFormat.Wrappers.TextLists;
 using TiaFileFormat.Wrappers.UserManagement;
-using static System.Net.Mime.MediaTypeNames;
 using static TiaAvaloniaProjectBrowser.Views.OnlineHelper;
 
 namespace TiaAvaloniaProjectBrowser.Views;
@@ -83,6 +83,7 @@ public partial class StoreObjectView : UserControl, IDisposable
 
     private WebView webView;
     private string webViewUrl;
+    private FoldingManager foldingManager;
 
     public StoreObjectView()
     {
@@ -142,7 +143,7 @@ public partial class StoreObjectView : UserControl, IDisposable
 
     private async void Open_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        CodeBlock cblk;
+        BaseBlock cblk;
         if (this.DataContext is OnlineTreeItem oti)
         {
             cblk = OnlineBlockConverter.GetOnlineCodeBlock(oti.Connection, oti.blockRid);
@@ -155,7 +156,7 @@ public partial class StoreObjectView : UserControl, IDisposable
                 var rel1 = sb.GetRelationsWithNameResolved("Siemens.Automation.CommonServices.Library.Model.TypeObjectBase.TypeToDefaultVersion").FirstOrDefault();
                 sb = rel1.GetRelationsWithNameResolved("Siemens.Automation.ObjectFrame.CoreLibraryObject.VisibleParts").FirstOrDefault();
             }
-            cblk = _codeBlockConverter.Convert(sb, _convertOptions) as CodeBlock;
+            cblk = _codeBlockConverter.Convert(sb, _convertOptions) as BaseBlock;
         }
 
         if (cblk != null)
@@ -165,9 +166,10 @@ public partial class StoreObjectView : UserControl, IDisposable
             Directory.CreateDirectory(tempPath);
             var file = Path.Combine(tempPath, string.Join("_", cblk.Name.Split(Path.GetInvalidFileNameChars())) + ".xml");
             File.WriteAllText(file, cblk.ToAutomationXml());
+            //File.WriteAllText(file, xmlEditor.Text);
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo.FileName = exe;
-            proc.StartInfo.Arguments = file;
+            proc.StartInfo.Arguments = '"' + file + '"';
             //proc.StartInfo.UseShellExecute = true;
             proc.Start();
         }
@@ -293,6 +295,7 @@ public partial class StoreObjectView : UserControl, IDisposable
             tabSvg.IsVisible = false;
             tabWebview.IsVisible = false;
             tabGrid.IsVisible = false;
+            tabGrid2.IsVisible = false;
             tabTreeGrid.IsVisible = false;
             tabCodeEditor.IsVisible = false;
             tabGraphicGrid.IsVisible = false;
@@ -602,7 +605,9 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         codeEditor.Text = CsvSerializer.ToCsv(plcTagTable.Tags);
                                         tabCodeEditor.IsVisible = true;
                                         datagrid.ItemsSource = plcTagTable.Tags;
+                                        datagrid2.ItemsSource = plcTagTable.UserConstants;
                                         tabGrid.IsVisible = true;
+                                        tabGrid2.IsVisible = true;
                                         tabGrid.IsSelected = true;
                                         break;
                                     }
@@ -656,6 +661,13 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         var _textMateInstallation = xmlEditor.InstallTextMate(_registryOptions);
                                         _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".xml").Id));
                                         xmlEditor.Text = cfChart.ToAutomationXml();
+
+                                        if (foldingManager != null)
+                                            FoldingManager.Uninstall(foldingManager);
+                                        foldingManager = FoldingManager.Install(xmlEditor.TextArea);
+                                        var strategy = new XmlFoldingStrategy();
+                                        strategy.UpdateFoldings(foldingManager, xmlEditor.Document);
+
                                         tabXmlEditor.IsVisible = true;
 
                                         var imgs = cfChart.ConvertToSvgs();
@@ -904,6 +916,12 @@ public partial class StoreObjectView : UserControl, IDisposable
                 _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".xml").Id));
                 xmlEditor.Text = codeBlock.ToAutomationXml();
 
+                if (foldingManager != null)
+                    FoldingManager.Uninstall(foldingManager);
+                foldingManager = FoldingManager.Install(xmlEditor.TextArea);
+                var strategy = new XmlFoldingStrategy();
+                strategy.UpdateFoldings(foldingManager, xmlEditor.Document);
+
                 tabXmlEditor.IsVisible = true;
                 if (!tabCodeEditor.IsVisible)
                     tabXmlEditor.IsSelected = true;
@@ -914,6 +932,13 @@ public partial class StoreObjectView : UserControl, IDisposable
                 var _textMateInstallation = xmlEditor.InstallTextMate(_registryOptions);
                 _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".xml").Id));
                 xmlEditor.Text = codeBlock.ToAutomationXml();
+
+                if (foldingManager != null)
+                    FoldingManager.Uninstall(foldingManager);
+                foldingManager = FoldingManager.Install(xmlEditor.TextArea);
+                var strategy = new XmlFoldingStrategy();
+                strategy.UpdateFoldings(foldingManager, xmlEditor.Document);
+
                 tabXmlEditor.IsVisible = true;
                 tabXmlEditor.IsSelected = true;
             }
