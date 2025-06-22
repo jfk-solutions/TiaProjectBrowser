@@ -46,7 +46,7 @@
     <PackageReference Include="Northwoods.GoDiagram.Avalonia" Version="10.0.12" />
     <PackageReference Include="RtfDomParser" Version="7.0.0" />
     <PackageReference Include="SharpPcap" Version="6.3.1" />
-    <PackageReference Include="WebView.Avalonia.Cross" Version="11.2.4" />
+    <PackageReference Include="WebView.Avalonia.Cross" Version="11.3.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,7 +56,7 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="1.25.6.17" />
+        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="1.25.6.23" />
         <PackageReference Include="jfk-solutions.TiaFileFormat.S7CommPlus" Version="1.25.6.17" />
     </ItemGroup>
 
