@@ -45,7 +45,7 @@ jobs:
 
     - name: Publish
       run: |
-        dotnet publish -r win-x64 --self-contained true -p:PublishSingleFile=true -c Release src/TiaProjectBrowser.Desktop/TiaProjectBrowser.Desktop.csproj
+        dotnet publish -r win-x64 -c Release src/TiaProjectBrowser.Desktop/TiaProjectBrowser.Desktop.csproj
 
     - name: rm batch
       run: rm ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/TiaProjectBrowser.bat
