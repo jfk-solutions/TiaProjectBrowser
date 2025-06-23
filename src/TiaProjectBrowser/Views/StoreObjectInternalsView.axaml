@@ -16,6 +16,7 @@
 			<RowDefinition Height="26"></RowDefinition>
 			<RowDefinition Height="26"></RowDefinition>
 			<RowDefinition Height="5"></RowDefinition>
+			<RowDefinition Height="26"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
 
@@ -49,10 +50,15 @@
 		<TextBox IsReadOnly="True" Margin="0,0,10,0" Padding="5,0,0,0" VerticalContentAlignment="Center" MinHeight="0" Height="26" Grid.Column="1" Grid.Row="3" Text="{Binding Comment}" />
 		<TextBlock Grid.Column="0" Grid.Row="4" Text="Tia-Type-Name: " />
 		<TextBox IsReadOnly="True" Margin="0,0,10,0" Padding="5,0,0,0" VerticalContentAlignment="Center" MinHeight="0" Height="26" Grid.Column="1" Grid.Row="4" Text="{Binding TiaTypeName}" />
-		<TreeDataGrid Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CanUserResizeColumns="True" x:Name="tv" BorderThickness="1" BorderBrush="Gray">
+		<TextBlock Margin="10,0,0,0" Grid.Column="0" Grid.Row="6" Text="Children" />
+		<TreeDataGrid Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CanUserResizeColumns="True" x:Name="tv" BorderThickness="1" BorderBrush="Gray">
 			<TreeDataGrid.Resources>
 				<DataTemplate x:Key="copyCell">
-					<Button Content="copy" DataContext="{Binding}" Click="ButtonCopyContent" />
+					<StackPanel Orientation="Horizontal">
+						<Button Content="copy type" DataContext="{Binding}" Click="ButtonCopyType" />
+						<Button Margin="5,0,0,0" Content="copy" DataContext="{Binding}" Click="ButtonCopyContent" />
+						<Button Margin="5,0,0,0" Content="hex" DataContext="{Binding}" Click="ButtonHex" />
+					</StackPanel>
 				</DataTemplate>
 				<DataTemplate x:Key="dataCell">
 					<ContentControl Height="20" Content="{Binding Content}" VerticalContentAlignment="Center"/>

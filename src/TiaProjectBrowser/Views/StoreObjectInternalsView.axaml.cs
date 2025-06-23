@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using TiaFileFormat.Database.Business;
 using TiaFileFormat.Database.StorageTypes;
+using TiaProjectBrowser;
 
 namespace TiaAvaloniaProjectBrowser.Views;
 
@@ -41,11 +42,12 @@ public partial class StoreObjectInternalsView : UserControl, IDisposable
             var sb = this.DataContext as StorageBusinessObject;
             if (sb != null)
             {
-                var src = new HierarchicalTreeDataGridSource<TreeItemWrapper>(sb.Children.Select(x => new TreeItemWrapper(x, x.GetType().Name)))
+                var src = new HierarchicalTreeDataGridSource<TreeItemWrapper>(sb.Children.Select(x => new TreeItemWrapper(x, x.GetType().Namespace + "." + x.GetType().Name)))
                 {
                     Columns =
                 {
-                    new HierarchicalExpanderColumn<TreeItemWrapper>(new TextColumn<TreeItemWrapper, string>("Name", x => x.Name), x => x.Children),
+                    new HierarchicalExpanderColumn<TreeItemWrapper>(
+                    new TextColumn<TreeItemWrapper, string>("Name", x => x.Name), x => x.Children),
                     new TemplateColumn<TreeItemWrapper>("", "copyCell"),
                     new TemplateColumn<TreeItemWrapper>("Content", "dataCell")
                 }
@@ -158,11 +160,42 @@ public partial class StoreObjectInternalsView : UserControl, IDisposable
         {
             var wrp = ((Button)sender).DataContext as TreeItemWrapper;
             var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
-            //var dataObject = new DataObject();
-            //dataObject.Set(DataFormats.Text, wrp.Content.ToString());
-            //clipboard.SetDataObjectAsync(dataObject);
             clipboard.SetTextAsync(wrp.StringContent());
         }
         catch (Exception) { }
     }
+
+    private void ButtonCopyType(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        try
+        {
+            var wrp = ((Button)sender).DataContext as TreeItemWrapper;
+            var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+             clipboard.SetTextAsync(wrp.Name);
+        }
+        catch (Exception) { }
+    }
+
+    private void ButtonHex(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        try
+        {
+            var wrp = ((Button)sender).DataContext as TreeItemWrapper;
+            var bytes = wrp.ByteContent();
+            if (bytes != null)
+            {
+                var ipSel = new HexViewer(bytes);
+                var wnd = new Window();
+                wnd.Content = ipSel;
+                wnd.Padding = new Avalonia.Thickness(10);
+                wnd.Title = "Byte view of " + wrp.Name;
+                wnd.CanResize = true;
+                wnd.Width = 1250;
+                wnd.Height = 550;
+                wnd.Show();
+            }
+        }
+        catch (Exception) { }
+    }
+
 }

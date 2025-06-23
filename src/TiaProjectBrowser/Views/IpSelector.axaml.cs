@@ -38,7 +38,7 @@ public partial class IpSelector : UserControl
 
         if (sb != null)
         {
-            var nwInfos = NetworkInformationParser.ParseFromCpuOrSubPart(sb).Select(x => new TiaBrowserNetworkInformation()
+            var nwInfos = NetworkInformationConverter.ParseFromCpuOrSubPart(sb).Select(x => new TiaBrowserNetworkInformation()
             {
                 Source = "Project",
                 Name = x.Name,

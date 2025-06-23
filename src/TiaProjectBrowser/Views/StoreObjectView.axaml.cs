@@ -38,9 +38,6 @@ using TiaFileFormat.Wrappers.CfCharts.Converter;
 using TiaFileFormat.Wrappers.CodeBlocks;
 using TiaFileFormat.Wrappers.CodeBlocks.Interface;
 using TiaFileFormat.Wrappers.Controller.Alarms;
-using TiaFileFormat.Wrappers.Controller.ExternalSources;
-using TiaFileFormat.Wrappers.Controller.NamedValues;
-using TiaFileFormat.Wrappers.Controller.Network;
 using TiaFileFormat.Wrappers.Controller.Tags;
 using TiaFileFormat.Wrappers.Controller.WatchTable;
 using TiaFileFormat.Wrappers.Converters.AutomationXml;
@@ -53,7 +50,6 @@ using TiaFileFormat.Wrappers.Hmi.Tags;
 using TiaFileFormat.Wrappers.Hmi.WinCCAdvanced;
 using TiaFileFormat.Wrappers.Hmi.WinCCUnified;
 using TiaFileFormat.Wrappers.TextLists;
-using TiaFileFormat.Wrappers.UserManagement;
 using static TiaAvaloniaProjectBrowser.Views.OnlineHelper;
 
 namespace TiaAvaloniaProjectBrowser.Views;
@@ -287,7 +283,6 @@ public partial class StoreObjectView : UserControl, IDisposable
             webViewUrl = null;
             graphicdatagrid.ItemsSource = null;
             tabWebview.Content = null;
-            //BorderThickness="1" BorderBrush="Black" x:Name="webview" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 
             tabSpecialEditor.IsVisible = false;
             tabXmlEditor.IsVisible = false;
@@ -510,98 +505,37 @@ public partial class StoreObjectView : UserControl, IDisposable
                     tabWebview.IsSelected = true;
                     lastFile = fileName;
                 }
-                else if (sb?.IsOfType("Siemens.Simatic.Hmi.Utah.Scripting.HmiVBScriptGlobalData") == true ||
-                         sb?.TiaTypeName == "Siemens.Simatic.Hmi.Utah.Scripting.HmiVBScriptData" == true)
-                {
-                    var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-                    var _textMateInstallation = codeEditor.InstallTextMate(_registryOptions);
-                    _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".vbs").Id));
-
-                    codeEditor.Text = _winCCAdvancedScriptParser.GetVbScript(sb);
-                    tabCodeEditor.IsVisible = true;
-                    tabCodeEditor.IsSelected = true;
-                }
-                else if (sb?.IsOfType("Siemens.Simatic.Hmi.Utah.Scripting.HmiCScriptGlobalData") == true ||
-                         sb?.IsOfType("Siemens.Simatic.Hmi.Utah.Scripting.HmiCHeaderData") == true)
-                {
-                    var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-                    var _textMateInstallation = codeEditor.InstallTextMate(_registryOptions);
-                    _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".c").Id));
-
-                    codeEditor.Text = _winCCAdvancedScriptParser.GetCScript(sb);
-                    tabCodeEditor.IsVisible = true;
-                    tabCodeEditor.IsSelected = true;
-                }
-                else if (sb?.IsOfType("Siemens.Simatic.Hmi.DL.Scripting.HmiScriptGlobalData") == true)
-                {
-                    var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-                    var _textMateInstallation = codeEditor.InstallTextMate(_registryOptions);
-                    _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".js").Id));
-
-                    codeEditor.Text = _winCCUnifiedScriptParser.GetJavascript(sb);
-                    tabCodeEditor.IsVisible = true;
-                    tabCodeEditor.IsSelected = true;
-                }
-                else if (sb?.TiaTypeName == "Siemens.Simatic.HwConfiguration.Model.DeviceItemData" && (sb.CoreAttributes.Subtype == "S71500.CPU.Interface.IE" || sb.CoreAttributes.Subtype == "S71200.CPU.IeInterface" || sb.CoreAttributes.Subtype == "PC.CPU.Interface.IE.Plus"))
-                {
-                    var nwInfo = NetworkInformationParser.ParseNetworkFromDeviceItemData(sb);
-                    if (nwInfo != null)
-                    {
-                        codeEditor.Text = JsonSerializer.Serialize(nwInfo, new JsonSerializerOptions() { WriteIndented = true });
-                        tabCodeEditor.IsVisible = true;
-                        tabCodeEditor.IsSelected = true;
-                    }
-                }
-
                 else
                 {
                     if (sb != null)
                     {
-                        if (sb?.TiaTypeName == "Siemens.Simatic.Lang.Model.Libraries.CodeBlockDataByCopyTypeObject")
-                        {
-                            var rel1 = sb.GetRelationsWithNameResolved("Siemens.Automation.CommonServices.Library.Model.TypeObjectBase.TypeToDefaultVersion").FirstOrDefault();
-                            sb = rel1.GetRelationsWithNameResolved("Siemens.Automation.ObjectFrame.CoreLibraryObject.VisibleParts").FirstOrDefault();
-                        }
-                        if (CodeBlockConverter.IsConvertableObject(sb))
-                        {
-                            var wrp = _codeBlockConverter.Convert(sb, _convertOptions);
-
-                            if (wrp != null)
-                            {
-                                DisplayCodeBlock((BaseBlock)wrp);
-                                return;
-                            }
-                        }
-
                         var highLevelObject = _highLevelObjectConverterWrapper.Convert(sb, _convertOptions);
                         if (highLevelObject != null)
                         {
                             switch (highLevelObject)
                             {
-                                case ExternalSource externalSource:
+                                case BaseBlock baseBlock:
                                     {
-                                        codeEditor.Text = externalSource.ContentAsString;
-                                        tabCodeEditor.IsVisible = true;
-                                        tabCodeEditor.IsSelected = true;
+                                        DisplayCodeBlock(baseBlock);
                                         break;
                                     }
-                                case NamedValue namedValue:
+                                case WinCCScript winCCScript:
                                     {
-                                        codeEditor.Text = namedValue.ContentAsString;
-                                        tabCodeEditor.IsVisible = true;
-                                        tabCodeEditor.IsSelected = true;
-                                        break;
-                                    }
-                                case User user:
-                                    {
-                                        codeEditor.Text = JsonSerializer.Serialize(user, new JsonSerializerOptions() { WriteIndented = true });
+                                        var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
+                                        var _textMateInstallation = codeEditor.InstallTextMate(_registryOptions);
+                                        if (winCCScript.ScriptLang == TiaFileFormat.Wrappers.Hmi.ScriptLang.VB )
+                                            _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".vbs").Id));
+                                        else if (winCCScript.ScriptLang == TiaFileFormat.Wrappers.Hmi.ScriptLang.C || winCCScript.ScriptLang == TiaFileFormat.Wrappers.Hmi.ScriptLang.C_Header)
+                                            _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".c").Id));
+                                        else
+                                            _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".js").Id));
+                                        codeEditor.Text = winCCScript.Script;
                                         tabCodeEditor.IsVisible = true;
                                         tabCodeEditor.IsSelected = true;
                                         break;
                                     }
                                 case PlcTagTable plcTagTable:
                                     {
-                                        //CsvSerializer.ToCsv(plcTagTable.UserConstants)
                                         codeEditor.Text = CsvSerializer.ToCsv(plcTagTable.Tags);
                                         tabCodeEditor.IsVisible = true;
                                         datagrid.ItemsSource = plcTagTable.Tags;
@@ -686,50 +620,6 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         var lst = new ObservableCollection<WatchTableEntryWithValue>(watchTable.Items.Select(x => new WatchTableEntryWithValue(x)));
                                         datagrid.ItemsSource = lst;
 
-                                        /*
-                                        if (MainView.s7CommPlusVars != null)
-                                        {
-                                            this.cancellationTokenSource = new CancellationTokenSource();
-                                            var token = this.cancellationTokenSource.Token;
-                                            Task.Factory.StartNew(async () =>
-                                            {
-                                                var tagsWithName = lst.Where(x => !string.IsNullOrEmpty(x.Name)).ToList();
-                                                var dictWithAddress = tagsWithName.ToDictionary(x => x, x => MainView.s7CommPlusVars.TryGetValue((!string.IsNullOrEmpty(x.Address) ? "MArea." : "") + x.Name.Replace("\"", "").Replace(" ",""), out var info) ? info : null);
-                                                var dictWithTags = dictWithAddress.Where(x => x.Value != null).ToDictionary(x => x.Key, x => PlcTags.TagFactory(x.Key.Name, new S7CommPlusDriver.ItemAddress(x.Value.AccessSequence), x.Value.Softdatatype));
-                                                while (!token.IsCancellationRequested && dictWithTags.Count > 0)
-                                                {
-                                                    var res = MainView.s7CommPlusConnection.ReadTags(dictWithTags.Values);
-                                                    if (res == 0)
-                                                    {
-                                                        Dispatcher.UIThread.Invoke(() =>
-                                                        {
-                                                            foreach (var e in dictWithTags)
-                                                            {
-                                                                e.Key.Value = e.Value switch
-                                                                {
-                                                                    PlcTagBool ptb => ptb.Value,
-                                                                    PlcTagByte ptb => ptb.Value,
-                                                                    PlcTagInt ptb => ptb.Value,
-                                                                    PlcTagUInt ptb => ptb.Value,
-                                                                    PlcTagLInt ptb => ptb.Value,
-                                                                    PlcTagULInt ptb => ptb.Value,
-                                                                    PlcTagSInt ptb => ptb.Value,
-                                                                    PlcTagUSInt ptb => ptb.Value,
-                                                                    PlcTagChar ptb => ptb.Value,
-                                                                    PlcTagDInt ptb => ptb.Value,
-                                                                    PlcTagUDInt ptb => ptb.Value,
-                                                                    PlcTagReal ptb => ptb.Value,
-                                                                    PlcTagLReal ptb => ptb.Value,
-                                                                    _ => null
-                                                                };
-                                                            }
-                                                        });
-                                                    }
-                                                    await Task.Delay(500);
-                                                }
-                                            });
-                                        }
-                                        */
                                         tabGrid.IsVisible = true;
                                         tabGrid.IsSelected = true;
                                         break;
@@ -743,13 +633,6 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         tabGrid.IsSelected = true;
                                         break;
                                     }
-                                case HmiCycle hmiCycle:
-                                    {
-                                        codeEditor.Text = JsonSerializer.Serialize(hmiCycle, new JsonSerializerOptions() { WriteIndented = true });
-                                        tabCodeEditor.IsVisible = true;
-                                        tabCodeEditor.IsSelected = true;
-                                        break;
-                                    }
                                 case HmiCycleList hmiCycleList:
                                     {
                                         codeEditor.Text = JsonSerializer.Serialize(hmiCycleList, new JsonSerializerOptions() { WriteIndented = true });
@@ -757,13 +640,6 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         tabCodeEditor.IsVisible = true;
                                         tabGrid.IsVisible = true;
                                         tabGrid.IsSelected = true;
-                                        break;
-                                    }
-                                case HmiConnection hmiConnection:
-                                    {
-                                        codeEditor.Text = JsonSerializer.Serialize(hmiConnection, new JsonSerializerOptions() { WriteIndented = true });
-                                        tabCodeEditor.IsVisible = true;
-                                        tabCodeEditor.IsSelected = true;
                                         break;
                                     }
                                 case HmiConnectionList hmiConnectionList:
@@ -865,45 +741,6 @@ public partial class StoreObjectView : UserControl, IDisposable
                 }
 
                 var txt = codeBlock.ToSourceBlock(new CodeBlockToSourceBlockConverter.ConvertOptions() { Mnemonik = TiaFileFormat.Wrappers.CodeBlocks.Mnemonic.German });
-
-                //var txt = "";
-                //foreach (var nw in cBlk.Networks.Zip(cBlk.ToCodeNetworks(new CodeBlockToCodeConverter.ConvertOptions() { Mnemonik = TiaFileFormat.Wrappers.CodeBlocks.Mnemonic.German })))
-                //{
-                //    if (nw.Second == null)
-                //    {
-                //    }
-                //    else if (nw.First.BlockLang == BlockLang.SCL)
-                //    {
-                //        txt += "(*#### NETWORK - " + (nw.First.Title?.GetDefaultText() ?? "") + " ####*)\n";
-                //        var cmt = nw.First.Comment?.GetDefaultText();
-                //        if (cmt != null)
-                //        {
-                //            txt += "(*####*)\n";
-                //            var texts = cmt.Replace("\r", "").Split('\n');
-                //            foreach (var t in texts)
-                //                txt += "(*#### " + t + " ####*)\n";
-                //            txt += "(*####*)\n";
-                //        }
-                //        txt += "\n";
-                //        txt += nw.Second;
-                //    }
-                //    else if (nw.First.BlockLang == BlockLang.STL)
-                //    {
-                //        txt += "//#### NETWORK - " + (nw.First.Title?.GetDefaultText() ?? "") + " ####\n";
-                //        var cmt = nw.First.Comment?.GetDefaultText();
-                //        if (cmt != null)
-                //        {
-                //            txt += "//####\n";
-                //            var texts = cmt.Replace("\r", "").Split('\n');
-                //            foreach (var t in texts)
-                //                txt += "//#### " + t + " ####\n";
-                //            txt += "//####\n";
-                //        }
-                //        txt += "\n";
-                //        txt += nw.Second;
-                //    }
-                //}
-
                 if (!string.IsNullOrEmpty(txt))
                 {
                     codeEditor.Text = txt;

@@ -29,6 +29,15 @@ namespace TiaAvaloniaProjectBrowser.Views
             return content.ToString();
         }
 
+        public byte[] ByteContent()
+        {
+            if (content is Memory<byte> mem)
+                return mem.ToArray();
+            if (content is byte[] b)
+                return b;
+            return null;
+        }
+
         private object content;
         public object Content
         {
