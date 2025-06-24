@@ -26,7 +26,6 @@ namespace TiaAvaloniaProjectBrowser.Views
             {
                 using var ms = new MemoryStream();
                 using var image = new MagickImage(img.Data);
-                //image.Scale(new Percentage(60));
                 image.Write(ms, MagickFormat.Svg);
                 ms.Position = 0;
                 using var sr = new StreamReader(ms);
@@ -44,7 +43,6 @@ namespace TiaAvaloniaProjectBrowser.Views
                 imgCtl.Source = new Bitmap(ms);
                 return imgCtl;
             }
-            return null;
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

@@ -147,12 +147,7 @@ public partial class StoreObjectView : UserControl, IDisposable
         else
         {
             var sb = this.DataContext as StorageBusinessObject;
-            if (sb?.TiaTypeName == "Siemens.Simatic.Lang.Model.Libraries.CodeBlockDataByCopyTypeObject")
-            {
-                var rel1 = sb.GetRelationsWithNameResolved("Siemens.Automation.CommonServices.Library.Model.TypeObjectBase.TypeToDefaultVersion").FirstOrDefault();
-                sb = rel1.GetRelationsWithNameResolved("Siemens.Automation.ObjectFrame.CoreLibraryObject.VisibleParts").FirstOrDefault();
-            }
-            cblk = _codeBlockConverter.Convert(sb, _convertOptions) as BaseBlock;
+            cblk = _highLevelObjectConverterWrapper.Convert(sb, _convertOptions) as BaseBlock;
         }
 
         if (cblk != null)
