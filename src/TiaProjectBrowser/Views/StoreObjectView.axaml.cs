@@ -702,6 +702,7 @@ public partial class StoreObjectView : UserControl, IDisposable
                     new CheckBoxColumn<Member>("HmiWriteable", x => !x.HmiReadOnly),
                     new CheckBoxColumn<Member>("HmiVisible", x => x.HmiVisible),
                     new CheckBoxColumn<Member>("SetPoint", x => x.SetPoint),
+                    new TextColumn<Member, UInt32?>("OffsetInBits", x => x.OffsetInBits),
                     new TextColumn<Member, string>("Id", x => x.ID),
                     new TextColumn<Member, string>("Comment", x => x.Comment == null ? "" : x.Comment.ToString() ?? ""),
                 }
