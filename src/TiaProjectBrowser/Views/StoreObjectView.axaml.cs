@@ -50,6 +50,7 @@ using TiaFileFormat.Wrappers.Hmi.Tags;
 using TiaFileFormat.Wrappers.Hmi.WinCCAdvanced;
 using TiaFileFormat.Wrappers.Hmi.WinCCUnified;
 using TiaFileFormat.Wrappers.TextLists;
+using static System.Net.Mime.MediaTypeNames;
 using static TiaAvaloniaProjectBrowser.Views.OnlineHelper;
 
 namespace TiaAvaloniaProjectBrowser.Views;
@@ -712,7 +713,11 @@ public partial class StoreObjectView : UserControl, IDisposable
         tabTreeGrid.IsVisible = true;
 
         if (codeBlock.IsKowHowProtected && !codeBlock.DecryptionPossible)
+        {
             codeEditor.Text = "KowHowProtected, Password not specified or wrong";
+            tabCodeEditor.IsVisible = true;
+            tabCodeEditor.IsSelected = true;
+        }
         else
         {
             if (codeBlock.BlockLang == BlockLang.SCL || codeBlock.BlockLang == BlockLang.STL || codeBlock.BlockLang == BlockLang.UDT)
