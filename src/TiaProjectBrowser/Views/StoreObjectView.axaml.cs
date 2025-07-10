@@ -279,6 +279,8 @@ public partial class StoreObjectView : UserControl, IDisposable
             webViewUrl = null;
             graphicdatagrid.ItemsSource = null;
             tabWebview.Content = null;
+            treedatagrid.Source = null;
+            treedatagrid2.Source = null;
 
             tabSpecialEditor.IsVisible = false;
             tabXmlEditor.IsVisible = false;
@@ -288,6 +290,7 @@ public partial class StoreObjectView : UserControl, IDisposable
             tabGrid.IsVisible = false;
             tabGrid2.IsVisible = false;
             tabTreeGrid.IsVisible = false;
+            tabTreeGrid2.IsVisible = false;
             tabCodeEditor.IsVisible = false;
             tabGraphicGrid.IsVisible = false;
 
@@ -581,7 +584,7 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         }
                                         };
                                         treedatagrid.Source = src;
-                                        src.ExpandAll();
+                                        //src.ExpandAll();
                                         tabTreeGrid.IsVisible = true;
 
                                         codeEditor.Text = JsonSerializer.Serialize(cfChart, new JsonSerializerOptions() { WriteIndented = true });
@@ -709,8 +712,24 @@ public partial class StoreObjectView : UserControl, IDisposable
                 }
         };
         treedatagrid.Source = src;
-        src.ExpandAll();
+        //src.ExpandAll();
         tabTreeGrid.IsVisible = true;
+
+        var src2 = new HierarchicalTreeDataGridSource<MemberInstance>(codeBlock.Interface?.MemberValues)
+        {
+            Columns =
+                {
+                    new HierarchicalExpanderColumn<MemberInstance>(new TextColumn<MemberInstance, string>("Name", x => x.Name), x => x.Children),
+                    new TextColumn<MemberInstance, string>("DataType", x => x.Member.DataType ?? ""),
+                    new TextColumn<MemberInstance, string>("StartValue", x => x.Value),
+                    new TextColumn<MemberInstance, UInt32?>("OffsetInBits", x => x.OffsetInBits),
+                    new TextColumn<MemberInstance, UInt32?>("CompleteOffsetInBits", x => x.CompleteOffsetInBits),
+                    new TextColumn<MemberInstance, string>("Comment", x => x.Comment == null ? "" : x.Comment.ToString() ?? ""),
+                }
+        };
+        treedatagrid2.Source = src2;
+        //src.ExpandAll();
+        tabTreeGrid2.IsVisible = true;
 
         if (codeBlock.IsKowHowProtected && !codeBlock.DecryptionPossible)
         {
