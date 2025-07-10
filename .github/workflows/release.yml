@@ -51,6 +51,10 @@ jobs:
       run: rm ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/TiaProjectBrowser.bat
     - name: rm pdb
       run: rm ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/*.pdb
+    - name: cp dlls
+      run: |
+        mkdir -p ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/runtimes/win-x64/native
+        cp ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/runtimes/win-x64/native/*.dll ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/runtimes/win-x64/native
     - name: Zip files (win-x64)
       working-directory: ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/
       run: zip -r TiaProjectBrowser-${{ github.event.release.tag_name }}-win-x64.zip .

@@ -45,6 +45,7 @@
     <PackageReference Include="Magick.NET.Core" Version="14.6.0" />
     <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
     <PackageReference Include="Northwoods.GoDiagram.Avalonia" Version="10.0.12" />
+    <PackageReference Include="PacketDotNet" Version="1.4.8" />
     <PackageReference Include="RtfDomParser" Version="7.0.0" />
     <PackageReference Include="SharpPcap" Version="6.3.1" />
     <PackageReference Include="WebView.Avalonia.Cross" Version="11.3.1" />
@@ -57,7 +58,7 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="2025.6.27.2" />
+        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="2025.7.2.2" />
         <PackageReference Include="jfk-solutions.TiaFileFormat.S7CommPlus" Version="2025.6.24.1" />
     </ItemGroup>
 
