@@ -38,6 +38,7 @@ using TiaFileFormat.Wrappers.CfCharts.Converter;
 using TiaFileFormat.Wrappers.CodeBlocks;
 using TiaFileFormat.Wrappers.CodeBlocks.Interface;
 using TiaFileFormat.Wrappers.Controller.Alarms;
+using TiaFileFormat.Wrappers.Controller.Opc;
 using TiaFileFormat.Wrappers.Controller.Tags;
 using TiaFileFormat.Wrappers.Controller.WatchTable;
 using TiaFileFormat.Wrappers.Converters.AutomationXml;
@@ -648,6 +649,13 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         tabCodeEditor.IsVisible = true;
                                         tabGrid.IsVisible = true;
                                         tabGrid.IsSelected = true;
+                                        break;
+                                    }
+                                case OpcServerInterface opcServerInterface:
+                                    {
+                                        xmlEditor.Text = opcServerInterface.ServerInterfaceFile;
+                                        tabXmlEditor.IsVisible = true;
+                                        tabXmlEditor.IsSelected = true;
                                         break;
                                     }
                                 case HmiAlarmList hmiAlarmList:
