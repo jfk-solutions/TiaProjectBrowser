@@ -16,7 +16,8 @@ namespace TiaAvaloniaProjectBrowser.Views
                 if (cpuDevice != null)
                 {
                     var cpuType = cpuDevice.GetChild<DeviceItemData>().InvariantTypeName;
-                    return sb.Name + " [" + cpuType + "]";
+                    if (!string.IsNullOrEmpty(cpuType))
+                        return sb.Name + " [" + cpuType + "]";
                 }
                 return sb.ProcessedName;
             }

@@ -21,7 +21,7 @@ xmlns:avaloniaedit="using:AvaloniaEdit"
 			<RowDefinition Height="30"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
-		<Button  Grid.Column="1" Grid.Row="0" VerticalAlignment="Top" Margin="0,0,0,0" Click="Expert_Click" x:Name="cmdExpert" HorizontalAlignment="Right">Expert</Button>
+		<Button Grid.Column="1" Grid.Row="0" VerticalAlignment="Top" Margin="0,0,0,0" Click="Expert_Click" x:Name="cmdExpert" HorizontalAlignment="Right">Expert</Button>
 		<TextBlock Grid.Column="0" Grid.Row="0" Text="Name: " VerticalAlignment="Center" />
 		<TextBox IsReadOnly="True" Grid.Column="1" Grid.Row="0" Margin="0,0,70,0" Padding="5,0,0,0" VerticalContentAlignment="Center" MinHeight="0" Height="26" Text="{Binding Name}" />
 		<TextBlock Grid.Column="0" Grid.Row="1" Text="Comment: " VerticalAlignment="Center" />

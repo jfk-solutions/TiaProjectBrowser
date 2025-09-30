@@ -43,10 +43,13 @@ namespace TiaAvaloniaProjectBrowser.Views
                     }
                     else
                     {
-                        var img = new Image() { MaxWidth = 50, Height = imgSize };
-                        using var ms = new MemoryStream(imgData.Value.ToArray());
-                        img.Source = new Bitmap(ms);
-                        return img;
+                        if (imgData.Value.Length > 0)
+                        {
+                            var img = new Image() { MaxWidth = 50, Height = imgSize };
+                            using var ms = new MemoryStream(imgData.Value.ToArray());
+                            img.Source = new Bitmap(ms);
+                            return img;
+                        }
                     }
                 }
             }

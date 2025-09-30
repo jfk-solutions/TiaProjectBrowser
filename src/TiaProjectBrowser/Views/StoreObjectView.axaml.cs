@@ -48,6 +48,7 @@ using TiaFileFormat.Wrappers.Hmi.Connections;
 using TiaFileFormat.Wrappers.Hmi.Cycle;
 using TiaFileFormat.Wrappers.Hmi.GraphicLists;
 using TiaFileFormat.Wrappers.Hmi.Tags;
+using TiaFileFormat.Wrappers.Hmi.Udts;
 using TiaFileFormat.Wrappers.Hmi.WinCCAdvanced;
 using TiaFileFormat.Wrappers.Hmi.WinCCUnified;
 using TiaFileFormat.Wrappers.TextLists;
@@ -229,10 +230,11 @@ public partial class StoreObjectView : UserControl, IDisposable
                 File.WriteAllText(fileNm, res.Html, new UTF8Encoding(false));
             }
         }
-        else if (sb?.IsOfType("Siemens.Simatic.Hmi.Utah.GraphX.HmiScreenData") == true)
+        else if (sb?.IsOfType("Siemens.Simatic.Hmi.Utah.GraphX.HmiScreenData") == true ||
+                 sb?.IsOfType("Siemens.Simatic.Hmi.Utah.Modules.ScreenModules.HmiScreenModuleVersionData") == true)
         {
             var topLevel = TopLevel.GetTopLevel(this);
-            var html = _winCCAdvancedScreenConverter.ConvertWinccAdvancedScreenToHTML(sb);
+            var html = _winCCAdvancedScreenConverter.Convert(sb, null) as WinCCScreen;
             var fileType = new FilePickerFileType("HTML File")
             {
                 Patterns = new[] { "*.html" },
@@ -444,9 +446,10 @@ public partial class StoreObjectView : UserControl, IDisposable
                     tabWebview.IsSelected = true;
                     lastFile = fileName;
                 }
-                else if (sb?.IsOfType("Siemens.Simatic.Hmi.Utah.GraphX.HmiScreenData") == true)
+                else if (sb?.IsOfType("Siemens.Simatic.Hmi.Utah.GraphX.HmiScreenData") == true ||
+                         sb?.IsOfType("Siemens.Simatic.Hmi.Utah.Modules.ScreenModules.HmiScreenModuleVersionData") == true)
                 {
-                    var res = _winCCAdvancedScreenConverter.ConvertWinccAdvancedScreenToHTML(sb);
+                    var res = _winCCAdvancedScreenConverter.Convert(sb, null) as WinCCScreen;
 
                     var html = "<meta charset=\"utf-8\"><div>";
                     html += "<script>function handleEvent() {window.chrome.webview.postMessage(window.event.type + \":\" + window.event.target.id);}</script>";
@@ -550,6 +553,15 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         codeEditor.Text = CsvSerializer.ToCsv(hmiTagTable.Tags);
                                         tabCodeEditor.IsVisible = true;
                                         datagrid.ItemsSource = hmiTagTable.Tags;
+                                        tabGrid.IsVisible = true;
+                                        tabGrid.IsSelected = true;
+                                        break;
+                                    }
+                                case HmiUdt hmiUdt:
+                                    {
+                                        codeEditor.Text = CsvSerializer.ToCsv(hmiUdt.Children);
+                                        tabCodeEditor.IsVisible = true;
+                                        datagrid.ItemsSource = hmiUdt.Children;
                                         tabGrid.IsVisible = true;
                                         tabGrid.IsSelected = true;
                                         break;
@@ -863,6 +875,14 @@ public partial class StoreObjectView : UserControl, IDisposable
             var ttn = obj is StorageBusinessObject sbo ? sbo.TiaTypeName : "";
             wnd.Title = "StoreObject: " + obj.Header.StoreObjectId + " (" + ttn + ")";
             wnd.Show();
+
+            //var sov2 = new StoreObjectLinkView();
+            //sov2.DataContext = obj;
+            //var wnd2 = new Window();
+            //wnd2.Content = sov2;
+            //wnd2.Padding = new Avalonia.Thickness(10);
+            //wnd2.Title = "StoreObject: " + obj.Header.StoreObjectId + " (" + ttn + ")";
+            //wnd2.Show();
         }
         catch (Exception) { }
     }
