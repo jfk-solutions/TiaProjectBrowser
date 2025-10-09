@@ -52,7 +52,6 @@ using TiaFileFormat.Wrappers.Hmi.Udts;
 using TiaFileFormat.Wrappers.Hmi.WinCCAdvanced;
 using TiaFileFormat.Wrappers.Hmi.WinCCUnified;
 using TiaFileFormat.Wrappers.TextLists;
-using static System.Net.Mime.MediaTypeNames;
 using static TiaAvaloniaProjectBrowser.Views.OnlineHelper;
 
 namespace TiaAvaloniaProjectBrowser.Views;
@@ -83,6 +82,9 @@ public partial class StoreObjectView : UserControl, IDisposable
     private WebView webView;
     private string webViewUrl;
     private FoldingManager foldingManager;
+    private TextMate.Installation textMateInstallationCode;
+    private TextMate.Installation textMateInstallationXml;
+    private TextMate.Installation textMateInstallationSpecial;
 
     public StoreObjectView()
     {
@@ -275,6 +277,10 @@ public partial class StoreObjectView : UserControl, IDisposable
 
         try
         {
+            textMateInstallationCode?.Dispose();
+            textMateInstallationSpecial?.Dispose();
+            textMateInstallationXml?.Dispose();
+
             webViewEvtHandler = null;
             specialEditor.Text = "";
             codeEditor.Text = "";
@@ -437,8 +443,9 @@ public partial class StoreObjectView : UserControl, IDisposable
                     File.WriteAllText(fileName, res.Html, new UTF8Encoding(false));
                     var scripts = res.GetScriptString();
                     var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-                    var _textMateInstallation = codeEditor.InstallTextMate(_registryOptions);
-                    _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".js").Id));
+                    textMateInstallationCode?.Dispose();
+                    textMateInstallationCode = codeEditor.InstallTextMate(_registryOptions);
+                    textMateInstallationCode.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".js").Id));
                     codeEditor.Text = scripts;
                     webViewUrl = fileName;
                     tabWebview.IsVisible = true;
@@ -460,8 +467,9 @@ public partial class StoreObjectView : UserControl, IDisposable
                     File.WriteAllText(fileName, html, new UTF8Encoding(false));
                     var scripts = res.GetScriptString();
                     var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-                    var _textMateInstallation = codeEditor.InstallTextMate(_registryOptions);
-                    _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".js").Id));
+                    textMateInstallationCode?.Dispose();
+                    textMateInstallationCode = codeEditor.InstallTextMate(_registryOptions);
+                    textMateInstallationCode.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".js").Id));
                     webViewEvtHandler = (s, e) =>
                     {
                         var @params = e.Message.Split(":");
@@ -525,13 +533,14 @@ public partial class StoreObjectView : UserControl, IDisposable
                                 case WinCCScript winCCScript:
                                     {
                                         var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-                                        var _textMateInstallation = codeEditor.InstallTextMate(_registryOptions);
+                                        textMateInstallationCode?.Dispose();
+                                        textMateInstallationCode = codeEditor.InstallTextMate(_registryOptions);
                                         if (winCCScript.ScriptLang == TiaFileFormat.Wrappers.Hmi.ScriptLang.VB )
-                                            _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".vbs").Id));
+                                            textMateInstallationCode.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".vbs").Id));
                                         else if (winCCScript.ScriptLang == TiaFileFormat.Wrappers.Hmi.ScriptLang.C || winCCScript.ScriptLang == TiaFileFormat.Wrappers.Hmi.ScriptLang.C_Header)
-                                            _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".c").Id));
+                                            textMateInstallationCode.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".c").Id));
                                         else
-                                            _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".js").Id));
+                                            textMateInstallationCode.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".js").Id));
                                         codeEditor.Text = winCCScript.Script;
                                         tabCodeEditor.IsVisible = true;
                                         tabCodeEditor.IsSelected = true;
@@ -604,8 +613,9 @@ public partial class StoreObjectView : UserControl, IDisposable
                                         tabCodeEditor.IsVisible = true;
 
                                         var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-                                        var _textMateInstallation = xmlEditor.InstallTextMate(_registryOptions);
-                                        _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".xml").Id));
+                                        textMateInstallationXml?.Dispose();
+                                        textMateInstallationXml = xmlEditor.InstallTextMate(_registryOptions);
+                                        textMateInstallationXml.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".xml").Id));
                                         xmlEditor.Text = cfChart.ToAutomationXml();
 
                                         if (foldingManager != null)
@@ -707,8 +717,9 @@ public partial class StoreObjectView : UserControl, IDisposable
         if (codeBlock is CodeBlock cblk && cblk.SpecialCodeBlockData != null)
         {
             var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-            var _textMateInstallation = specialEditor.InstallTextMate(_registryOptions);
-            _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".json").Id));
+            textMateInstallationSpecial?.Dispose();
+            textMateInstallationSpecial = specialEditor.InstallTextMate(_registryOptions);
+            textMateInstallationSpecial.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".json").Id));
             specialEditor.Text = JsonSerializer.Serialize(cblk.SpecialCodeBlockData, cblk.SpecialCodeBlockData.GetType(), new JsonSerializerOptions() { WriteIndented = true });
             tabSpecialEditor.IsVisible = true;
         }
@@ -789,8 +800,9 @@ public partial class StoreObjectView : UserControl, IDisposable
                 }
 
                 var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-                var _textMateInstallation = xmlEditor.InstallTextMate(_registryOptions);
-                _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".xml").Id));
+                textMateInstallationXml?.Dispose();
+                textMateInstallationXml = xmlEditor.InstallTextMate(_registryOptions);
+                textMateInstallationXml.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".xml").Id));
                 xmlEditor.Text = codeBlock.ToAutomationXml();
 
                 if (foldingManager != null)
@@ -806,8 +818,9 @@ public partial class StoreObjectView : UserControl, IDisposable
             else
             {
                 var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
-                var _textMateInstallation = xmlEditor.InstallTextMate(_registryOptions);
-                _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".xml").Id));
+                textMateInstallationXml?.Dispose();
+                textMateInstallationXml = xmlEditor.InstallTextMate(_registryOptions);
+                textMateInstallationXml.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".xml").Id));
                 xmlEditor.Text = codeBlock.ToAutomationXml();
 
                 if (foldingManager != null)
