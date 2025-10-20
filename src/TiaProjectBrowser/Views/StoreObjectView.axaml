@@ -65,6 +65,7 @@ xmlns:avaloniaedit="using:AvaloniaEdit"
 				<TabItem Header="XML" IsVisible="False" x:Name="tabXmlEditor"><avaloniaedit:TextEditor x:Name="xmlEditor" ShowLineNumbers="True" FontFamily="Cascadia Code,Consolas,Menlo,Monospace" /></TabItem>
 				<TabItem Header="Interface" IsVisible="False" x:Name="tabTreeGrid"><TreeDataGrid UseLayoutRounding="False" x:Name="treedatagrid" CanUserResizeColumns="True"></TreeDataGrid></TabItem>
 				<TabItem Header="Interface Values" IsVisible="False" x:Name="tabTreeGrid2"><TreeDataGrid UseLayoutRounding="False" x:Name="treedatagrid2" CanUserResizeColumns="True"></TreeDataGrid></TabItem>
+				<TabItem Header="Debug" IsVisible="False" x:Name="tabDebugEditor"><avaloniaedit:TextEditor x:Name="debugEditor" ShowLineNumbers="True" FontFamily="Cascadia Code,Consolas,Menlo,Monospace" /></TabItem>
 			</TabControl>
 		</Grid>
 		</Border>

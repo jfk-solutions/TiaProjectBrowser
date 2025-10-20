@@ -285,6 +285,7 @@ public partial class StoreObjectView : UserControl, IDisposable
             specialEditor.Text = "";
             codeEditor.Text = "";
             xmlEditor.Text = "";
+            debugEditor.Text = "";
             webViewUrl = null;
             graphicdatagrid.ItemsSource = null;
             tabWebview.Content = null;
@@ -302,6 +303,7 @@ public partial class StoreObjectView : UserControl, IDisposable
             tabTreeGrid2.IsVisible = false;
             tabCodeEditor.IsVisible = false;
             tabGraphicGrid.IsVisible = false;
+            tabDebugEditor.IsVisible  = false;
 
             tabControl.SelectedItem = null;
             buttons.IsVisible = false;
@@ -722,6 +724,12 @@ public partial class StoreObjectView : UserControl, IDisposable
             textMateInstallationSpecial.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".json").Id));
             specialEditor.Text = JsonSerializer.Serialize(cblk.SpecialCodeBlockData, cblk.SpecialCodeBlockData.GetType(), new JsonSerializerOptions() { WriteIndented = true });
             tabSpecialEditor.IsVisible = true;
+        }
+
+        if (codeBlock.Interface != null)
+        {
+            debugEditor.Text = string.Join("\n\n\n\n", codeBlock.Interface.AllSourceXmls);
+            tabDebugEditor.IsVisible = true;
         }
 
         var src = new HierarchicalTreeDataGridSource<Member>(codeBlock.Interface?.Members)
