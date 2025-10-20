@@ -1,8 +1,8 @@
 ﻿using System;
 
 using Avalonia;
-using Avalonia.ReactiveUI;
 using Avalonia.WebView.Desktop;
+using ReactiveUI.Avalonia;
 
 namespace TiaAvaloniaProjectBrowser.Desktop;
 
