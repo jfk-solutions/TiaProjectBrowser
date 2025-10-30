@@ -726,11 +726,11 @@ public partial class StoreObjectView : UserControl, IDisposable
             tabSpecialEditor.IsVisible = true;
         }
 
-        if (codeBlock.Interface != null)
-        {
-            debugEditor.Text = string.Join("\n\n\n\n", codeBlock.Interface.AllSourceXmls);
-            tabDebugEditor.IsVisible = true;
-        }
+        //if (codeBlock.Interface != null)
+        //{
+        //    debugEditor.Text = string.Join("\n\n\n\n", codeBlock.Interface.AllSourceXmls);
+        //    tabDebugEditor.IsVisible = true;
+        //}
 
         var src = new HierarchicalTreeDataGridSource<Member>(codeBlock.Interface?.Members)
         {
