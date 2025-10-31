@@ -763,6 +763,8 @@ public partial class StoreObjectView : UserControl, IDisposable
                     new TextColumn<MemberInstance, string>("StartValue", x => x.Value),
                     new TextColumn<MemberInstance, UInt32?>("OffsetInBits", x => x.OffsetInBits),
                     new TextColumn<MemberInstance, UInt32?>("CompleteOffsetInBits", x => x.CompleteOffsetInBits),
+                    new TextColumn<MemberInstance, uint>("LID", x => x.LID),
+                    new TextColumn<MemberInstance, string>("LidPathString", x => x.LidPathString),
                     new TextColumn<MemberInstance, string>("Comment", x => x.Comment == null ? "" : x.Comment.ToString() ?? ""),
                 }
         };
