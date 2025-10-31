@@ -38,7 +38,7 @@
     <PackageReference Include="AvaloniaHex" Version="0.1.10" />
     <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="DotNetProjects.DotNetSiemensPLCToolBoxLibrary" Version="4.4.5" />
-    <PackageReference Include="DotNetProjects.S7CommPlusDriver" Version="1.1.0" />
+    <PackageReference Include="DotNetProjects.S7CommPlusDriver" Version="1.1.2" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.9.1" />
     <PackageReference Include="Magick.NET.Core" Version="14.9.1" />
     <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
@@ -59,7 +59,7 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="2025.10.30.1" />
+        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="2025.10.31.1" />
         <PackageReference Include="jfk-solutions.TiaFileFormat.S7CommPlus" Version="2025.6.24.1" />
     </ItemGroup>
 
