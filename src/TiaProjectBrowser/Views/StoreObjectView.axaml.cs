@@ -157,17 +157,21 @@ public partial class StoreObjectView : UserControl, IDisposable
 
         if (cblk != null)
         {
-            var exe = @"C:\Program Files\Siemens\Automation\SIMATIC Automation Compare Tool\ACTool.exe ";
-            var tempPath = Path.Combine(Path.GetTempPath(), "TempTiaBlock");
-            Directory.CreateDirectory(tempPath);
-            var file = Path.Combine(tempPath, string.Join("_", cblk.Name.Split(Path.GetInvalidFileNameChars())) + ".xml");
-            File.WriteAllText(file, cblk.ToAutomationXml());
-            //File.WriteAllText(file, xmlEditor.Text);
-            System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            proc.StartInfo.FileName = exe;
-            proc.StartInfo.Arguments = '"' + file + '"';
-            //proc.StartInfo.UseShellExecute = true;
-            proc.Start();
+            try
+            {
+                var exe = @"C:\Program Files\Siemens\Automation\SIMATIC Automation Compare Tool\ACTool.exe ";
+                var tempPath = Path.Combine(Path.GetTempPath(), "TempTiaBlock");
+                Directory.CreateDirectory(tempPath);
+                var file = Path.Combine(tempPath, string.Join("_", cblk.Name.Split(Path.GetInvalidFileNameChars())) + ".xml");
+                File.WriteAllText(file, cblk.ToAutomationXml());
+                //File.WriteAllText(file, xmlEditor.Text);
+                System.Diagnostics.Process proc = new System.Diagnostics.Process();
+                proc.StartInfo.FileName = exe;
+                proc.StartInfo.Arguments = '"' + file + '"';
+                //proc.StartInfo.UseShellExecute = true;
+                proc.Start();
+            }
+            catch { }
         }
     }
 
@@ -726,6 +730,7 @@ public partial class StoreObjectView : UserControl, IDisposable
             tabSpecialEditor.IsVisible = true;
         }
 
+
         //if (codeBlock.Interface != null)
         //{
         //    debugEditor.Text = string.Join("\n\n\n\n", codeBlock.Interface.AllSourceXmls);
@@ -780,9 +785,9 @@ public partial class StoreObjectView : UserControl, IDisposable
         }
         else
         {
-            if (codeBlock.BlockLang == BlockLang.SCL || codeBlock.BlockLang == BlockLang.STL || codeBlock.BlockLang == BlockLang.UDT)
+            if (codeBlock.BlockLang == BlockLang.SCL || codeBlock.BlockLang == BlockLang.STL || codeBlock.BlockLang == BlockLang.UDT || codeBlock.BlockLang == BlockLang.DB || codeBlock.BlockLang == BlockLang.SDB)
             {
-                if (codeBlock.BlockLang == BlockLang.SCL || codeBlock.BlockLang == BlockLang.UDT)
+                if (codeBlock.BlockLang == BlockLang.SCL || codeBlock.BlockLang == BlockLang.UDT || codeBlock.BlockLang == BlockLang.DB || codeBlock.BlockLang == BlockLang.SDB)
                 {
                     var assembly = Assembly.GetExecutingAssembly();
                     using (var stream = assembly.GetManifestResourceStream("TiaProjectBrowser.Views.SCL.xshd"))
