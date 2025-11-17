@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-           9.0.x
+           10.0.x
     - name: Restore dependencies
       run: |
         dotnet restore src/TiaProjectBrowser.slnx
@@ -35,12 +35,12 @@ jobs:
         dotnet build -c Release src/TiaProjectBrowser.slnx
         
     - name: Zip files
-      working-directory: ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0
+      working-directory: ./src/TiaProjectBrowser.Desktop/bin/Release/net10.0
       run: zip -r TiaProjectBrowser-${{ github.event.release.tag_name }}.zip .
     - name: Upload to release
       uses: AButler/upload-release-assets@v3.0
       with:
-        files: 'src/TiaProjectBrowser.Desktop/bin/Release/net9.0/TiaProjectBrowser-${{ github.event.release.tag_name }}.zip'
+        files: 'src/TiaProjectBrowser.Desktop/bin/Release/net10.0/TiaProjectBrowser-${{ github.event.release.tag_name }}.zip'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish
@@ -48,18 +48,18 @@ jobs:
         dotnet publish -r win-x64 -c Release src/TiaProjectBrowser.Desktop/TiaProjectBrowser.Desktop.csproj
 
     - name: rm batch
-      run: rm ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/TiaProjectBrowser.bat
+      run: rm ./src/TiaProjectBrowser.Desktop/bin/Release/net10.0/win-x64/publish/TiaProjectBrowser.bat
     - name: rm pdb
-      run: rm ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/*.pdb
+      run: rm ./src/TiaProjectBrowser.Desktop/bin/Release/net10.0/win-x64/publish/*.pdb
     - name: cp dlls
       run: |
-        mkdir -p ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/runtimes/win-x64/native
-        cp ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/runtimes/win-x64/native/*.dll ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/runtimes/win-x64/native
+        mkdir -p ./src/TiaProjectBrowser.Desktop/bin/Release/net10.0/win-x64/publish/runtimes/win-x64/native
+        cp ./src/TiaProjectBrowser.Desktop/bin/Release/net10.0/runtimes/win-x64/native/*.dll ./src/TiaProjectBrowser.Desktop/bin/Release/net10.0/win-x64/publish/runtimes/win-x64/native
     - name: Zip files (win-x64)
-      working-directory: ./src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/
+      working-directory: ./src/TiaProjectBrowser.Desktop/bin/Release/net10.0/win-x64/publish/
       run: zip -r TiaProjectBrowser-${{ github.event.release.tag_name }}-win-x64.zip .
     - name: Upload to release
       uses: AButler/upload-release-assets@v3.0
       with:
-        files: 'src/TiaProjectBrowser.Desktop/bin/Release/net9.0/win-x64/publish/TiaProjectBrowser-${{ github.event.release.tag_name }}-win-x64.zip'
+        files: 'src/TiaProjectBrowser.Desktop/bin/Release/net10.0/win-x64/publish/TiaProjectBrowser-${{ github.event.release.tag_name }}-win-x64.zip'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
