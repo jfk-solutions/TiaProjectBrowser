@@ -16,3 +16,10 @@ For a Licenced version, please visit: https://github.com/jfk-solutions/TiaFileFo
 
 ![image](https://github.com/user-attachments/assets/cfac78c7-9ee6-4877-835a-eacbb9b79cdc)
 
+# How to run
+
+## MacOs
+
+- extract to a folder
+- in that folder run: `xattr -dr com.apple.quarantine .`
+- run `dotnet TiaProjectBrowser.Desktop.dll`

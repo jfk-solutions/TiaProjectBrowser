@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -59,7 +59,7 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="2025.11.11.2" />
+        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="2025.11.17.1" />
         <PackageReference Include="jfk-solutions.TiaFileFormat.S7CommPlus" Version="2025.6.24.1" />
     </ItemGroup>
 
