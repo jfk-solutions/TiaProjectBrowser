@@ -60,7 +60,7 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="2025.11.17.1" />
+        <PackageReference Include="jfk-solutions.TiaFileFormat" Version="2025.12.5.1" />
         <PackageReference Include="jfk-solutions.TiaFileFormat.S7CommPlus" Version="2025.6.24.1" />
     </ItemGroup>
 
