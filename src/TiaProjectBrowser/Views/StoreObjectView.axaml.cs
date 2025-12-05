@@ -1,3 +1,4 @@
+using Acornima;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.LogicalTree;
@@ -15,6 +16,7 @@ using ImageMagick;
 using RtfDomParser;
 using Siemens.Automation.DomainModel;
 using Siemens.Simatic.Hmi.Utah.Globalization;
+using Siemens.Simatic.Hmi.Utah.GraphX;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -86,6 +88,8 @@ public partial class StoreObjectView : UserControl, IDisposable
     private TextMate.Installation textMateInstallationXml;
     private TextMate.Installation textMateInstallationSpecial;
 
+    private List<string> lastScreens = new List<string>();
+
     public StoreObjectView()
     {
         InitializeComponent();
@@ -120,6 +124,7 @@ public partial class StoreObjectView : UserControl, IDisposable
             webView.WebMessageReceived -= webViewEvtHandler;
         }
     }
+
     private void DiplayWebsite()
     {
         webView = new WebView();
@@ -445,13 +450,67 @@ public partial class StoreObjectView : UserControl, IDisposable
                 else if (sb?.IsOfType("Siemens.Simatic.Hmi.DL.ModernUI.ILScreenData") == true)
                 {
                     var res = _winCCUnifiedScreenConverter.ConvertWinccUnifiedScreenToHTML(sb);
+
+                    var html = "<meta charset=\"utf-8\"><div>";
+                    html += "<script>function handleEvent(par) {window.chrome.webview.postMessage(window.event.type + \":\" + window.event.target.id + \":\" + par);}</script>";
+                    html += res.Html;
+                    html += "</div>";
+
                     string fileName = Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString() + ".html");
-                    File.WriteAllText(fileName, res.Html, new UTF8Encoding(false));
+                    File.WriteAllText(fileName, html, new UTF8Encoding(false));
                     var scripts = res.GetScriptString();
                     var _registryOptions = new RegistryOptions(ThemeName.LightPlus);
                     textMateInstallationCode?.Dispose();
                     textMateInstallationCode = codeEditor.InstallTextMate(_registryOptions);
                     textMateInstallationCode.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".js").Id));
+
+                    webViewEvtHandler = (s, e) =>
+                    {
+                        var @params = e.Message.Split(":");
+                        var evt = @params[0];
+                        var id = @params[1];
+                        var scriptName = @params[2];
+                        string commands = null;
+                        if (res.Scripts.TryGetValue(id, out var script))
+                        {
+                            commands = script[scriptName];
+                        }
+                        if (commands != null)
+                        {
+                            var parser = new Parser(new ParserOptions { AllowImportExportEverywhere = true, AllowAwaitOutsideFunction = true });
+                            var ast = parser.ParseScript(commands);
+                            var func = ast.Traverse<Acornima.Ast.Node>(x => x.ChildNodes).OfType<Acornima.Ast.FunctionDeclaration>().FirstOrDefault();
+                            foreach(var f in func.Body.ChildNodes)
+                            {
+                                if (f is Acornima.Ast.ExpressionStatement es)
+                                {
+                                    if (es.Expression is Acornima.Ast.CallExpression ce)
+                                    {
+                                        var callee = Acornima.AstToJavaScript.ToJavaScript(ce.Callee);
+                                        switch(callee)
+                                        {
+                                            case "HMIRuntime.UI.SysFct.ChangeScreen":
+                                                {
+                                                    var args = ce.Arguments.Select(x => Acornima.AstToJavaScript.ToJavaScript(x)).ToList();
+                                                    var nm = args[0];
+                                                    nm = nm.Trim('"');
+                                                    var screen = sb.Parent.Parent.Traverse(x => x.ProjectTreeChildren).FirstOrDefault(x => x.Name == nm);
+                                                    if (screen != null)
+                                                    {
+                                                        Dispatcher.UIThread.Invoke(() =>
+                                                        {
+                                                            this.DataContext = screen;
+                                                        });
+                                                    }
+                                                    break;
+                                                }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    };
+
                     codeEditor.Text = scripts;
                     webViewUrl = fileName;
                     tabWebview.IsVisible = true;
@@ -462,6 +521,8 @@ public partial class StoreObjectView : UserControl, IDisposable
                 else if (sb?.IsOfType("Siemens.Simatic.Hmi.Utah.GraphX.HmiScreenData") == true ||
                          sb?.IsOfType("Siemens.Simatic.Hmi.Utah.Modules.ScreenModules.HmiScreenModuleVersionData") == true)
                 {
+                    lastScreens.Add(sb.Name);
+
                     var res = _winCCAdvancedScreenConverter.Convert(sb, null) as WinCCScreen;
 
                     var html = "<meta charset=\"utf-8\"><div>";
@@ -497,10 +558,12 @@ public partial class StoreObjectView : UserControl, IDisposable
                             {
                                 switch (cmd.Type)
                                 {
-                                    case TiaFileFormat.Wrappers.Hmi.WinCCAdvanced.WinCCAdvancedScriptParser.ScriptCommandType.ActivateScreen:
+                                    case TiaFileFormat.Wrappers.Hmi.WinCCAdvanced.WinCCAdvancedScriptParser.ScriptCommandType.ActivatePreviousScreen:
                                         {
-                                            var f = sb;
-                                            var nm = cmd.Arguments[0] as string;
+                                            lastScreens.RemoveAt(lastScreens.Count - 1);
+                                            var nm = lastScreens.Last();
+                                            lastScreens.RemoveAt(lastScreens.Count - 1);
+                                            nm = nm.Trim('"');
                                             var screen = sb.Parent.Parent.ProjectTreeChildren.SelectMany(x => x.ProjectTreeChildren).FirstOrDefault(x => x.Name == nm);
                                             if (screen != null)
                                             {
@@ -508,6 +571,37 @@ public partial class StoreObjectView : UserControl, IDisposable
                                                 {
                                                     this.DataContext = screen;
                                                 });
+                                            }
+                                            break;
+                                        }
+                                    case TiaFileFormat.Wrappers.Hmi.WinCCAdvanced.WinCCAdvancedScriptParser.ScriptCommandType.ActivateScreen:
+                                        {
+                                            var f = sb;
+                                            var nm = cmd.Arguments[0] as string;
+                                            nm = nm.Trim('"');
+                                            var screen = sb.Parent.Parent.ProjectTreeChildren.SelectMany(x => x.ProjectTreeChildren).FirstOrDefault(x => x.Name == nm);
+                                            if (screen != null)
+                                            {
+                                                Dispatcher.UIThread.Invoke(() =>
+                                                {
+                                                    this.DataContext = screen;
+                                                });
+                                            }
+                                            break;
+                                        }
+                                    case TiaFileFormat.Wrappers.Hmi.WinCCAdvanced.WinCCAdvancedScriptParser.ScriptCommandType.ActivateScreenByNumber:
+                                        {
+                                            var f = sb;
+                                            if (int.TryParse(cmd.Arguments[0] as string, out var nr))
+                                            {
+                                                var screen = sb.Parent.Parent.ProjectTreeChildren.SelectMany(x => x.ProjectTreeChildren).FirstOrDefault(x => x.GetChild<HmiScreenAttributes>()?.Number == nr);
+                                                if (screen != null)
+                                                {
+                                                    Dispatcher.UIThread.Invoke(() =>
+                                                    {
+                                                        this.DataContext = screen;
+                                                    });
+                                                }
                                             }
                                             break;
                                         }
