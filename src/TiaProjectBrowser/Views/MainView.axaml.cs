@@ -281,31 +281,6 @@ public partial class MainView : UserControl
                 var lst = container;
                 database.ParseAllObjects();
 
-                var umacItems = new List<StorageBusinessObject>();
-                if (database.RootObject.StoreObjectIds.ContainsKey("Project"))
-                {
-                    var prjObj = (StorageBusinessObject)database.RootObject.StoreObjectIds["Project"].StorageObject;
-                    umacItems.AddRange(prjObj.GetRelationsWithNameResolved("Siemens.Automation.Umac.Model.Root.UmacRootData.UmacRoot"));
-                }
-                if (database.RootObject.StoreObjectIds.ContainsKey("Library"))
-                {
-                    var libObj = (StorageBusinessObject)database.RootObject.StoreObjectIds["Library"].StorageObject;
-                    umacItems.AddRange(libObj.GetRelationsWithNameResolved("Siemens.Automation.Umac.Model.Root.UmacRootData.UmacRoot"));
-                }
-                umacItems = umacItems.Distinct().ToList();
-                if (umacItems.Count > 0)
-                {
-                    var umac = umacItems[0];
-                    var users = umac.GetRelationsWithNameResolved("Siemens.Automation.Umac.Model.Root.UmacRootData.AllUsers");
-                    if (users.Count() > 0)
-                    {
-                        var userItem = new SimpleTreeItem() { Name = "Users", ProjectTreeChildrenSorted = users };
-                        Dispatcher.UIThread.Invoke(() =>
-                        {
-                            lst.Add(new SimpleTreeItem() { Name = "Security", ProjectTreeChildrenSorted = [userItem] });
-                        });
-                    }
-                }
                 var imgs = database.FindStorageBusinessObjectsWithChildType<HmiInternalImageAttributes>();
                 if (imgs.Count() > 0)
                 {
