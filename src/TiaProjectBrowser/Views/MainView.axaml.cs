@@ -605,6 +605,23 @@ public partial class MainView : UserControl
                     }
                     catch (Exception) { }
                 };
+
+                var obInfoMnu = new MenuItem { Header = "OB-Info", };
+                obInfoMnu.Click += async (s, e) =>
+                {
+                    try
+                    {
+                        var sov = new ObView(sb);
+                        var wnd = new Window();
+                        wnd.Content = sov;
+                        wnd.Padding = new Avalonia.Thickness(10);
+                        var ttn = sb is StorageBusinessObject sbo ? sbo.TiaTypeName : "";
+                        wnd.Title = "Ob-Info";
+                        wnd.Show();
+                    }
+                    catch (Exception) { }
+                };
+
                 var copyMnu = new MenuItem { Header = "Copy to Clipboard", };
                 copyMnu.Click += async (s, e) =>
                 {
@@ -623,6 +640,7 @@ public partial class MainView : UserControl
                     opn,
                     callChart,
                     copyMnu,
+                    obInfoMnu
                 }
                 };
 

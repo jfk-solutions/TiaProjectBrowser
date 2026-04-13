@@ -77,6 +77,9 @@
     <Compile Update="Views\HexViewer.axaml.cs">
       <DependentUpon>HexViewer.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ObView.axaml.cs">
+      <DependentUpon>ObView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\StoreObjectLinkView.axaml.cs">
       <DependentUpon>StoreObjectLinkView.axaml</DependentUpon>
     </Compile>
