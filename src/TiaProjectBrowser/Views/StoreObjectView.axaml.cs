@@ -865,6 +865,8 @@ public partial class StoreObjectView : UserControl, IDisposable
                     new TextColumn<MemberInstance, uint>("LID", x => x.LID),
                     new TextColumn<MemberInstance, string>("LidPathString", x => x.LidPathString),
                     new TextColumn<MemberInstance, string>("Comment", x => x.Comment == null ? "" : x.Comment.ToString() ?? ""),
+                    new TextColumn<MemberInstance, uint>("CrcV1", x => x.CrcV1, options: new() { StringFormat = "0x{0:X}" }),
+                    new TextColumn<MemberInstance, uint>("CrcV2", x => x.CrcV2, options: new() { StringFormat = "0x{0:X}" }),
                 }
         };
         treedatagrid2.Source = src2;
